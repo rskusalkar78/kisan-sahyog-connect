@@ -1,10 +1,8 @@
+
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, Circle, FileText, Upload, AlertCircle, Bot, MessageSquare, Send, Lightbulb, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import StepProgress from "./StepProgress";
+import ChatInterface from "./ChatInterface";
 
 interface ApplicationStep {
   id: number;
@@ -24,21 +22,6 @@ interface ChatMessage {
 const ApplicationAssistant = () => {
   const [selectedScheme, setSelectedScheme] = useState("PM-KISAN");
   const [currentStep, setCurrentStep] = useState(1);
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      type: "bot",
-      message: "Hello! I'm your AI Application Assistant. I can help you with document requirements, eligibility criteria, application status, and step-by-step guidance. How can I assist you today?",
-      timestamp: new Date(),
-      suggestions: [
-        "What documents do I need?",
-        "Check my eligibility",
-        "Help with current step",
-        "Application status"
-      ]
-    }
-  ]);
-  const [userMessage, setUserMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const { toast } = useToast();
 
   const schemes = {
@@ -120,28 +103,6 @@ const ApplicationAssistant = () => {
   const currentScheme = schemes[selectedScheme as keyof typeof schemes];
   const progress = (currentStep / currentScheme.steps.length) * 100;
 
-  const handleSendMessage = () => {
-    if (!userMessage.trim()) return;
-
-    const newUserMessage: ChatMessage = {
-      type: "user",
-      message: userMessage,
-      timestamp: new Date()
-    };
-
-    setChatMessages(prev => [...prev, newUserMessage]);
-    setIsTyping(true);
-    
-    // Simulate AI processing time
-    setTimeout(() => {
-      const botResponse = generateEnhancedBotResponse(userMessage);
-      setChatMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1500);
-
-    setUserMessage("");
-  };
-
   const generateEnhancedBotResponse = (message: string): ChatMessage => {
     const lowerMessage = message.toLowerCase();
     
@@ -192,18 +153,7 @@ const ApplicationAssistant = () => {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setUserMessage(suggestion);
-    handleSendMessage();
-  };
-
-  const handleStepClick = (stepId: number) => {
-    if (stepId <= currentStep) {
-      setCurrentStep(stepId);
-      toast({
-        title: "Step Selected",
-        description: `Moved to step ${stepId}: ${currentScheme.steps[stepId - 1].title}`,
-      });
-    }
+    // This will be handled by the ChatInterface component
   };
 
   return (
@@ -214,169 +164,24 @@ const ApplicationAssistant = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Application Steps */}
         <div className="lg:col-span-2">
-          <Card className="border-green-200">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle className="text-green-800">{currentScheme.name}</CardTitle>
-                  <CardDescription>Application Progress</CardDescription>
-                </div>
-                <select
-                  value={selectedScheme}
-                  onChange={(e) => setSelectedScheme(e.target.value)}
-                  className="p-2 border border-green-200 rounded-md focus:border-green-400 focus:outline-none"
-                >
-                  <option value="PM-KISAN">PM-KISAN</option>
-                  <option value="FASAL-BIMA">Fasal Bima Yojana</option>
-                </select>
-              </div>
-              <div className="mt-4">
-                <div className="flex justify-between text-sm text-green-600 mb-2">
-                  <span>Progress</span>
-                  <span>{Math.round(progress)}% Complete</span>
-                </div>
-                <Progress value={progress} className="h-2" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {currentScheme.steps.map((step) => (
-                  <div
-                    key={step.id}
-                    className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                      step.status === "completed"
-                        ? "border-green-500 bg-green-50"
-                        : step.status === "current"
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-200 bg-gray-50"
-                    }`}
-                    onClick={() => handleStepClick(step.id)}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="mt-1">
-                        {step.status === "completed" ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
-                        ) : (
-                          <Circle className={`h-5 w-5 ${step.status === "current" ? "text-blue-600" : "text-gray-400"}`} />
-                        )}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-medium text-gray-800">{step.title}</h3>
-                        <p className="text-sm text-gray-600 mt-1">{step.description}</p>
-                        {step.documents.length > 0 && (
-                          <div className="mt-2">
-                            <p className="text-xs font-medium text-gray-700 mb-1">Required Documents:</p>
-                            <div className="flex flex-wrap gap-1">
-                              {step.documents.map((doc, index) => (
-                                <Badge key={index} variant="outline" className="text-xs">
-                                  <FileText className="h-3 w-3 mr-1" />
-                                  {doc}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <StepProgress
+            currentScheme={currentScheme}
+            selectedScheme={selectedScheme}
+            onSchemeChange={setSelectedScheme}
+            currentStep={currentStep}
+            onStepClick={setCurrentStep}
+            progress={progress}
+          />
         </div>
 
-        {/* Enhanced AI Chat Assistant */}
         <div className="lg:col-span-1">
-          <Card className="border-green-200 h-full">
-            <CardHeader>
-              <CardTitle className="text-green-800 flex items-center">
-                <Bot className="h-5 w-5 mr-2" />
-                AI Assistant
-                <Badge className="ml-2 bg-green-100 text-green-800">Enhanced</Badge>
-              </CardTitle>
-              <CardDescription>Smart assistance for your application journey</CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="h-96 overflow-y-auto p-4 space-y-3">
-                {chatMessages.map((msg, index) => (
-                  <div key={index}>
-                    <div className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-xs p-3 rounded-lg ${
-                        msg.type === "user"
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-100 text-gray-800"
-                      }`}>
-                        <p className="text-sm">{msg.message}</p>
-                        <span className="text-xs opacity-70">
-                          {msg.timestamp.toLocaleTimeString()}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {msg.suggestions && msg.type === "bot" && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {msg.suggestions.map((suggestion, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleSuggestionClick(suggestion)}
-                            className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
-                          >
-                            {suggestion}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-                
-                {isTyping && (
-                  <div className="flex justify-start">
-                    <div className="bg-gray-100 text-gray-800 p-3 rounded-lg">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              <div className="p-4 border-t border-green-200">
-                <div className="flex space-x-2">
-                  <input
-                    type="text"
-                    value={userMessage}
-                    onChange={(e) => setUserMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-                    placeholder="Ask about documents, steps, eligibility..."
-                    className="flex-1 p-2 border border-green-200 rounded-md focus:border-green-400 focus:outline-none text-sm"
-                  />
-                  <Button
-                    onClick={handleSendMessage}
-                    size="sm"
-                    className="bg-green-600 hover:bg-green-700"
-                    disabled={!userMessage.trim()}
-                  >
-                    <Send className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                <div className="mt-3 flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center">
-                    <Lightbulb className="h-3 w-3 mr-1" />
-                    Quick help available
-                  </div>
-                  <div className="flex items-center">
-                    <HelpCircle className="h-3 w-3 mr-1" />
-                    24/7 Support
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <ChatInterface
+            currentScheme={currentScheme}
+            currentStep={currentStep}
+            onSuggestionClick={handleSuggestionClick}
+            generateBotResponse={generateEnhancedBotResponse}
+          />
         </div>
       </div>
     </div>
