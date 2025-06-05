@@ -1,17 +1,12 @@
-
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Search, Filter, MapPin, Calendar, IndianRupee, Users, ArrowLeft, Clock } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
+import SchemeHeader from "@/components/SchemeHeader";
+import SearchAndFilter from "@/components/SearchAndFilter";
+import SchemeResults from "@/components/SchemeResults";
+import SchemeCard from "@/components/SchemeCard";
 
 const Schemes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const { toast } = useToast();
 
   const categories = ["All", "Income Support", "Insurance", "Subsidy", "Loan", "Technology", "Soil Health", "Marketing", "Irrigation", "Seeds", "Equipment"];
 
@@ -193,143 +188,28 @@ const Schemes = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleApply = (schemeName: string) => {
-    toast({
-      title: "Application Started",
-      description: `Redirecting to ${schemeName} application process`,
-    });
-  };
-
-  const formatLastUpdated = (lastUpdated: string) => {
-    return `Updated ${lastUpdated}`;
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-green-200">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center space-x-3">
-              <ArrowLeft className="h-6 w-6 text-green-600" />
-              <span className="text-lg font-semibold text-green-800">Back to Home</span>
-            </Link>
-            <h1 className="text-2xl font-bold text-green-800">Schemes Database</h1>
-          </div>
-        </div>
-      </header>
+      <SchemeHeader />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Search and Filter */}
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-5 w-5" />
-              <Input
-                type="text"
-                placeholder="Search schemes by name or description..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 border-green-200 focus:border-green-400"
-              />
-            </div>
-            <Button variant="outline" className="border-green-200 hover:bg-green-50">
-              <Filter className="h-4 w-4 mr-2" />
-              Advanced Filter
-            </Button>
-          </div>
+        <SearchAndFilter
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          categories={categories}
+        />
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedCategory(category)}
-                className={selectedCategory === category ? "bg-green-600 hover:bg-green-700" : "border-green-200 hover:bg-green-50"}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Results Count */}
-        <div className="mb-6 flex justify-between items-center">
-          <p className="text-green-700">
-            Showing {filteredSchemes.length} of {allSchemes.length} schemes
-          </p>
-          <div className="flex items-center space-x-2 text-sm text-green-600">
-            <Clock className="h-4 w-4" />
-            <span>Last updated: December 2024</span>
-          </div>
-        </div>
+        <SchemeResults
+          filteredSchemesCount={filteredSchemes.length}
+          totalSchemesCount={allSchemes.length}
+        />
 
         {/* Enhanced Schemes Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredSchemes.map((scheme) => (
-            <Card key={scheme.id} className="border-green-200 hover:shadow-xl transition-all duration-300">
-              <CardHeader>
-                <div className="flex justify-between items-start mb-2">
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">
-                    {scheme.category}
-                  </Badge>
-                  <Badge variant="outline" className="border-green-500 text-green-700">
-                    {scheme.status}
-                  </Badge>
-                </div>
-                <CardTitle className="text-green-800 text-lg">{scheme.title}</CardTitle>
-                <CardDescription className="text-green-600">{scheme.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="flex items-center">
-                      <IndianRupee className="h-4 w-4 text-green-600 mr-1" />
-                      <span className="font-medium">{scheme.amount}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Users className="h-4 w-4 text-green-600 mr-1" />
-                      <span className="font-medium">{scheme.beneficiaries}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 text-green-600 mr-1" />
-                      <span className="font-medium">{scheme.deadline}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 text-green-600 mr-1" />
-                      <span className="font-medium">{scheme.state}</span>
-                    </div>
-                  </div>
-                  <div className="pt-2">
-                    <p className="text-xs text-green-600 mb-2">
-                      <strong>Eligibility:</strong> {scheme.eligibility}
-                    </p>
-                    <div className="flex justify-between text-xs text-green-600">
-                      <span><strong>Launched:</strong> {scheme.launchDate}</span>
-                      <span className="text-blue-600 font-medium">{formatLastUpdated(scheme.lastUpdated)}</span>
-                    </div>
-                  </div>
-                  <div className="pt-4 space-y-2">
-                    <Button 
-                      className="w-full bg-green-600 hover:bg-green-700"
-                      onClick={() => handleApply(scheme.title)}
-                    >
-                      Apply Now
-                    </Button>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button variant="outline" size="sm" className="border-green-200 hover:bg-green-50">
-                        Check Eligibility
-                      </Button>
-                      <Button variant="outline" size="sm" className="border-green-200 hover:bg-green-50">
-                        View Details
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <SchemeCard key={scheme.id} scheme={scheme} />
           ))}
         </div>
       </div>
