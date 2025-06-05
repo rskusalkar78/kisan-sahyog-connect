@@ -1,9 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bell, AlertCircle, CheckCircle, Clock, Settings, X } from "lucide-react";
+import { Bell, AlertCircle, CheckCircle, Clock, Settings, X, Calendar, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Alert {
@@ -14,45 +13,74 @@ interface Alert {
   timestamp: Date;
   isRead: boolean;
   category: string;
+  schemeDate?: Date;
+  deadline?: Date;
 }
 
 const RealTimeAlerts = () => {
   const [alerts, setAlerts] = useState<Alert[]>([
     {
       id: "1",
-      title: "Application Status Update",
+      title: "PM-KISAN Application Approved",
       message: "Your PM-KISAN application has been approved and payment will be processed within 7 days.",
       type: "success",
-      timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+      timestamp: new Date(Date.now() - 1000 * 60 * 30),
       isRead: false,
-      category: "Application"
+      category: "Application",
+      schemeDate: new Date("2024-12-15"),
+      deadline: new Date("2024-12-22")
     },
     {
       id: "2",
-      title: "New Scheme Alert",
-      message: "New subsidy scheme for organic farming launched. Check eligibility and apply now.",
+      title: "New Organic Farming Subsidy Scheme",
+      message: "Government launched new ₹5,000 crore organic farming subsidy scheme. Apply before January 31st, 2025.",
       type: "info",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
       isRead: false,
-      category: "Schemes"
+      category: "Schemes",
+      schemeDate: new Date("2024-12-10"),
+      deadline: new Date("2025-01-31")
     },
     {
       id: "3",
-      title: "Document Verification Required",
+      title: "Fasal Bima Document Verification",
       message: "Additional documents needed for your Fasal Bima application. Please upload within 3 days.",
       type: "warning",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
       isRead: true,
-      category: "Documents"
+      category: "Documents",
+      deadline: new Date("2024-12-18")
     },
     {
       id: "4",
-      title: "Payment Alert",
-      message: "PM-KISAN payment of ₹2,000 has been credited to your account ending with 1234.",
+      title: "PM-KISAN Payment Credited",
+      message: "PM-KISAN installment of ₹2,000 has been credited to your account ending with 1234.",
       type: "success",
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 days ago
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2),
       isRead: true,
-      category: "Payment"
+      category: "Payment",
+      schemeDate: new Date("2024-12-13")
+    },
+    {
+      id: "5",
+      title: "Soil Health Card Distribution",
+      message: "New soil health cards available for collection at your nearest agriculture office.",
+      type: "info",
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
+      isRead: false,
+      category: "Schemes",
+      schemeDate: new Date("2024-12-12"),
+      deadline: new Date("2024-12-30")
+    },
+    {
+      id: "6",
+      title: "Kisan Credit Card Interest Rate Reduced",
+      message: "KCC interest rates reduced to 4% per annum. Existing loans will be adjusted automatically.",
+      type: "success",
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4),
+      isRead: true,
+      category: "Policy",
+      schemeDate: new Date("2024-12-11")
     }
   ]);
 
@@ -151,6 +179,21 @@ const RealTimeAlerts = () => {
     return `${days}d ago`;
   };
 
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  const getDaysUntilDeadline = (deadline: Date) => {
+    const today = new Date();
+    const diffTime = deadline.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
   const unreadCount = alerts.filter(alert => !alert.isRead).length;
 
   return (
@@ -158,7 +201,7 @@ const RealTimeAlerts = () => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-bold text-green-800 mb-2">Real-Time Alerts</h2>
-          <p className="text-green-600">Stay updated with your applications and new schemes</p>
+          <p className="text-green-600">Stay updated with latest schemes, deadlines, and application status</p>
         </div>
         <div className="flex items-center space-x-3">
           <Badge className="bg-red-100 text-red-800">
@@ -172,13 +215,13 @@ const RealTimeAlerts = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Alerts List */}
+        {/* Enhanced Alerts List */}
         <div className="lg:col-span-2">
           <Card className="border-green-200">
             <CardHeader>
-              <CardTitle className="text-green-800">Recent Alerts</CardTitle>
+              <CardTitle className="text-green-800">Recent Alerts & Updates</CardTitle>
               <CardDescription>
-                Latest updates and notifications
+                Latest scheme updates with important dates and deadlines
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -209,10 +252,34 @@ const RealTimeAlerts = () => {
                                 <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                               )}
                             </div>
-                            <p className="text-sm text-gray-600 mb-2">{alert.message}</p>
+                            <p className="text-sm text-gray-600 mb-3">{alert.message}</p>
+                            
+                            {/* Enhanced Date Information */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+                              {alert.schemeDate && (
+                                <div className="flex items-center text-xs text-gray-500">
+                                  <Calendar className="h-3 w-3 mr-1" />
+                                  <span className="font-medium">Scheme Date:</span>
+                                  <span className="ml-1">{formatDate(alert.schemeDate)}</span>
+                                </div>
+                              )}
+                              {alert.deadline && (
+                                <div className="flex items-center text-xs">
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  <span className="font-medium">Deadline:</span>
+                                  <span className={`ml-1 ${
+                                    getDaysUntilDeadline(alert.deadline) <= 3 ? 'text-red-600 font-bold' : 'text-gray-500'
+                                  }`}>
+                                    {formatDate(alert.deadline)} 
+                                    ({getDaysUntilDeadline(alert.deadline)} days left)
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                            
                             <div className="flex items-center space-x-3 text-xs text-gray-500">
                               <span className="flex items-center">
-                                <Clock className="h-3 w-3 mr-1" />
+                                <TrendingUp className="h-3 w-3 mr-1" />
                                 {formatTimestamp(alert.timestamp)}
                               </span>
                               <Badge variant="outline" className="text-xs">

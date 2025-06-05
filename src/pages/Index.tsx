@@ -5,10 +5,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const featuredSchemes = [
     {
@@ -80,6 +82,40 @@ const Index = () => {
       title: "Application Started",
       description: `Redirecting to ${schemeName} application form`,
     });
+  };
+
+  const handleFeatureClick = (feature: string) => {
+    switch (feature) {
+      case "schemes":
+        navigate("/schemes");
+        break;
+      case "eligibility":
+        toast({
+          title: "Eligibility Checker",
+          description: "Opening eligibility checker...",
+        });
+        // Could navigate to eligibility checker page
+        break;
+      case "assistant":
+        toast({
+          title: "Application Assistant",
+          description: "Opening AI-powered application assistant...",
+        });
+        // Could navigate to application assistant page
+        break;
+      case "alerts":
+        toast({
+          title: "Real-Time Alerts",
+          description: "Opening real-time alerts dashboard...",
+        });
+        // Could navigate to alerts page
+        break;
+      default:
+        toast({
+          title: feature,
+          description: `Opening ${feature}...`,
+        });
+    }
   };
 
   return (
@@ -162,18 +198,24 @@ const Index = () => {
         <div className="container mx-auto">
           <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">New Features</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+            <Card 
+              className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              onClick={() => handleFeatureClick("schemes")}
+            >
               <CardContent className="p-6 text-center">
                 <FileText className="h-12 w-12 text-green-600 mx-auto mb-4" />
                 <h4 className="font-semibold text-green-800 mb-2">Schemes Database</h4>
                 <p className="text-sm text-green-600">Browse comprehensive database of all government schemes</p>
-                <Button className="mt-4 w-full bg-green-600 hover:bg-green-700" asChild>
-                  <a href="/schemes">Explore Schemes</a>
+                <Button className="mt-4 w-full bg-green-600 hover:bg-green-700">
+                  Explore Schemes
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+            <Card 
+              className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              onClick={() => handleFeatureClick("eligibility")}
+            >
               <CardContent className="p-6 text-center">
                 <CheckCircle className="h-12 w-12 text-blue-600 mx-auto mb-4" />
                 <h4 className="font-semibold text-green-800 mb-2">Eligibility Checker</h4>
@@ -184,7 +226,10 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+            <Card 
+              className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              onClick={() => handleFeatureClick("assistant")}
+            >
               <CardContent className="p-6 text-center">
                 <Bot className="h-12 w-12 text-purple-600 mx-auto mb-4" />
                 <h4 className="font-semibold text-green-800 mb-2">Application Assistant</h4>
@@ -195,7 +240,10 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+            <Card 
+              className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+              onClick={() => handleFeatureClick("alerts")}
+            >
               <CardContent className="p-6 text-center">
                 <Bell className="h-12 w-12 text-orange-600 mx-auto mb-4" />
                 <h4 className="font-semibold text-green-800 mb-2">Real-Time Alerts</h4>
@@ -298,12 +346,16 @@ const Index = () => {
           <h3 className="text-3xl font-bold text-green-800 mb-8">Quick Access</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { title: "All Schemes", icon: Award, color: "green" },
-              { title: "Document Support", icon: FileText, color: "blue" },
-              { title: "Application Status", icon: CheckCircle, color: "purple" },
-              { title: "Contact Support", icon: MapPin, color: "orange" }
+              { title: "All Schemes", icon: Award, color: "green", action: "schemes" },
+              { title: "Document Support", icon: FileText, color: "blue", action: "documents" },
+              { title: "Application Status", icon: CheckCircle, color: "purple", action: "status" },
+              { title: "Contact Support", icon: MapPin, color: "orange", action: "support" }
             ].map((item, index) => (
-              <Card key={index} className="border-green-200 hover:shadow-lg transition-all cursor-pointer hover:scale-105">
+              <Card 
+                key={index} 
+                className="border-green-200 hover:shadow-lg transition-all cursor-pointer hover:scale-105"
+                onClick={() => handleFeatureClick(item.action)}
+              >
                 <CardContent className="p-8 text-center">
                   <item.icon className={`h-12 w-12 mx-auto mb-4 text-${item.color}-600`} />
                   <h4 className="font-semibold text-green-800">{item.title}</h4>

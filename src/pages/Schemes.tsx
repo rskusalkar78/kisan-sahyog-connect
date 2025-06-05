@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Filter, MapPin, Calendar, IndianRupee, Users, ArrowLeft } from "lucide-react";
+import { Search, Filter, MapPin, Calendar, IndianRupee, Users, ArrowLeft, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 
@@ -13,7 +13,7 @@ const Schemes = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { toast } = useToast();
 
-  const categories = ["All", "Income Support", "Insurance", "Subsidy", "Loan", "Technology", "Soil Health", "Marketing"];
+  const categories = ["All", "Income Support", "Insurance", "Subsidy", "Loan", "Technology", "Soil Health", "Marketing", "Irrigation", "Seeds", "Equipment"];
 
   const allSchemes = [
     {
@@ -27,7 +27,8 @@ const Schemes = () => {
       beneficiaries: "12 Crore+",
       eligibility: "Small and marginal farmers with cultivable land",
       state: "All India",
-      launchDate: "2019"
+      launchDate: "2019",
+      lastUpdated: "Dec 2024"
     },
     {
       id: 2,
@@ -40,7 +41,8 @@ const Schemes = () => {
       beneficiaries: "5.5 Crore+",
       eligibility: "All farmers growing notified crops",
       state: "All India",
-      launchDate: "2016"
+      launchDate: "2016",
+      lastUpdated: "Nov 2024"
     },
     {
       id: 3,
@@ -53,7 +55,8 @@ const Schemes = () => {
       beneficiaries: "22 Crore+",
       eligibility: "All farmers",
       state: "All India",
-      launchDate: "2015"
+      launchDate: "2015",
+      lastUpdated: "Dec 2024"
     },
     {
       id: 4,
@@ -66,20 +69,22 @@ const Schemes = () => {
       beneficiaries: "7 Crore+",
       eligibility: "All farmers with land records",
       state: "All India",
-      launchDate: "1998"
+      launchDate: "1998",
+      lastUpdated: "Dec 2024"
     },
     {
       id: 5,
-      title: "Digital Agriculture Mission",
+      title: "Digital Agriculture Mission 2.0",
       description: "Technology-driven solutions for modern farming practices",
-      amount: "Varies",
-      deadline: "2024-25",
+      amount: "₹2,817 Crore",
+      deadline: "2024-26",
       category: "Technology",
       status: "Active",
       beneficiaries: "1 Crore+",
       eligibility: "Progressive farmers and FPOs",
       state: "Selected States",
-      launchDate: "2021"
+      launchDate: "2021",
+      lastUpdated: "Dec 2024"
     },
     {
       id: 6,
@@ -92,7 +97,92 @@ const Schemes = () => {
       beneficiaries: "8 Lakh+",
       eligibility: "Farmers interested in organic farming",
       state: "All India",
-      launchDate: "2015"
+      launchDate: "2015",
+      lastUpdated: "Dec 2024"
+    },
+    {
+      id: 7,
+      title: "PM Krishi Sinchai Yojana",
+      description: "Expanding cultivated area under assured irrigation and improving water use efficiency",
+      amount: "₹50,000 Crore",
+      deadline: "2026",
+      category: "Irrigation",
+      status: "Active",
+      beneficiaries: "2 Crore+",
+      eligibility: "All farmers with irrigation needs",
+      state: "All India",
+      launchDate: "2015",
+      lastUpdated: "Nov 2024"
+    },
+    {
+      id: 8,
+      title: "National Seeds Mission",
+      description: "Quality seed production and distribution to increase crop productivity",
+      amount: "₹25,000/hectare",
+      deadline: "Ongoing",
+      category: "Seeds",
+      status: "Active",
+      beneficiaries: "50 Lakh+",
+      eligibility: "Seed producing farmers and agencies",
+      state: "All India",
+      launchDate: "2014",
+      lastUpdated: "Oct 2024"
+    },
+    {
+      id: 9,
+      title: "Sub-Mission on Agricultural Mechanization",
+      description: "Promoting farm mechanization for higher productivity",
+      amount: "40-50% subsidy",
+      deadline: "2025",
+      category: "Equipment",
+      status: "Active",
+      beneficiaries: "15 Lakh+",
+      eligibility: "Individual farmers, FPOs, SHGs",
+      state: "All India",
+      launchDate: "2014",
+      lastUpdated: "Dec 2024"
+    },
+    {
+      id: 10,
+      title: "e-NAM (National Agriculture Market)",
+      description: "Online trading platform for agricultural commodities",
+      amount: "Free platform",
+      deadline: "Ongoing",
+      category: "Marketing",
+      status: "Active",
+      beneficiaries: "1.7 Crore+",
+      eligibility: "All farmers and traders",
+      state: "All India",
+      launchDate: "2016",
+      lastUpdated: "Dec 2024"
+    },
+    {
+      id: 11,
+      title: "Pradhan Mantri Kisan Maan Dhan Yojana",
+      description: "Pension scheme for small and marginal farmers",
+      amount: "₹3,000/month pension",
+      deadline: "Ongoing",
+      category: "Income Support",
+      status: "Active",
+      beneficiaries: "25 Lakh+",
+      eligibility: "Small and marginal farmers (18-40 years)",
+      state: "All India",
+      launchDate: "2019",
+      lastUpdated: "Nov 2024"
+    },
+    {
+      id: 12,
+      title: "Formation & Promotion of FPOs",
+      description: "Supporting formation of Farmer Producer Organizations",
+      amount: "₹18.5 Lakh/FPO",
+      deadline: "2024-25",
+      category: "Subsidy",
+      status: "Active",
+      beneficiaries: "10,000 FPOs",
+      eligibility: "Groups of farmers",
+      state: "All India",
+      launchDate: "2020",
+      lastUpdated: "Oct 2024"
     }
   ];
 
@@ -108,6 +198,10 @@ const Schemes = () => {
       title: "Application Started",
       description: `Redirecting to ${schemeName} application process`,
     });
+  };
+
+  const formatLastUpdated = (lastUpdated: string) => {
+    return `Updated ${lastUpdated}`;
   };
 
   return (
@@ -162,13 +256,17 @@ const Schemes = () => {
         </div>
 
         {/* Results Count */}
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <p className="text-green-700">
             Showing {filteredSchemes.length} of {allSchemes.length} schemes
           </p>
+          <div className="flex items-center space-x-2 text-sm text-green-600">
+            <Clock className="h-4 w-4" />
+            <span>Last updated: December 2024</span>
+          </div>
         </div>
 
-        {/* Schemes Grid */}
+        {/* Enhanced Schemes Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredSchemes.map((scheme) => (
             <Card key={scheme.id} className="border-green-200 hover:shadow-xl transition-all duration-300">
@@ -208,9 +306,10 @@ const Schemes = () => {
                     <p className="text-xs text-green-600 mb-2">
                       <strong>Eligibility:</strong> {scheme.eligibility}
                     </p>
-                    <p className="text-xs text-green-600">
-                      <strong>Launched:</strong> {scheme.launchDate}
-                    </p>
+                    <div className="flex justify-between text-xs text-green-600">
+                      <span><strong>Launched:</strong> {scheme.launchDate}</span>
+                      <span className="text-blue-600 font-medium">{formatLastUpdated(scheme.lastUpdated)}</span>
+                    </div>
                   </div>
                   <div className="pt-4 space-y-2">
                     <Button 
