@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen } from "lucide-react";
+import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -158,6 +157,58 @@ const Index = () => {
         </div>
       </section>
 
+      {/* New Features Section */}
+      <section className="py-12 px-4 bg-white">
+        <div className="container mx-auto">
+          <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">New Features</h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <FileText className="h-12 w-12 text-green-600 mx-auto mb-4" />
+                <h4 className="font-semibold text-green-800 mb-2">Schemes Database</h4>
+                <p className="text-sm text-green-600">Browse comprehensive database of all government schemes</p>
+                <Button className="mt-4 w-full bg-green-600 hover:bg-green-700" asChild>
+                  <a href="/schemes">Explore Schemes</a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <CheckCircle className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                <h4 className="font-semibold text-green-800 mb-2">Eligibility Checker</h4>
+                <p className="text-sm text-green-600">Check your eligibility for multiple schemes instantly</p>
+                <Button className="mt-4 w-full bg-blue-600 hover:bg-blue-700" variant="secondary">
+                  Check Eligibility
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <Bot className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                <h4 className="font-semibold text-green-800 mb-2">Application Assistant</h4>
+                <p className="text-sm text-green-600">AI-powered help for completing applications</p>
+                <Button className="mt-4 w-full bg-purple-600 hover:bg-purple-700" variant="secondary">
+                  Get Help
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+              <CardContent className="p-6 text-center">
+                <Bell className="h-12 w-12 text-orange-600 mx-auto mb-4" />
+                <h4 className="font-semibold text-green-800 mb-2">Real-Time Alerts</h4>
+                <p className="text-sm text-green-600">Get instant notifications about scheme updates</p>
+                <Button className="mt-4 w-full bg-orange-600 hover:bg-orange-700" variant="secondary">
+                  View Alerts
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Featured Schemes */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto">
@@ -248,8 +299,8 @@ const Index = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { title: "All Schemes", icon: Award, color: "green" },
-              { title: "Application Status", icon: FileText, color: "blue" },
-              { title: "Policy Documents", icon: BookOpen, color: "purple" },
+              { title: "Document Support", icon: FileText, color: "blue" },
+              { title: "Application Status", icon: CheckCircle, color: "purple" },
               { title: "Contact Support", icon: MapPin, color: "orange" }
             ].map((item, index) => (
               <Card key={index} className="border-green-200 hover:shadow-lg transition-all cursor-pointer hover:scale-105">
