@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,30 +53,30 @@ const Index = () => {
     {
       title: "New MSP rates announced for Rabi crops 2024-25",
       date: "Dec 2024",
-      category: "Policy Update"
+      category: t('news.policy')
     },
     {
       title: "Digital Agriculture Mission 2.0 launched",
       date: "Nov 2024",
-      category: "Technology"
+      category: t('news.technology')
     },
     {
       title: "Subsidy rates increased for organic farming",
       date: "Nov 2024",
-      category: "Subsidy"
+      category: t('news.subsidy')
     }
   ];
 
   const quickStats = [
-    { label: "Total Schemes", value: "150+", icon: Award },
-    { label: "Active Beneficiaries", value: "25 Cr+", icon: TrendingUp },
-    { label: "Budget Allocated", value: "₹2.8L Cr", icon: FileText },
-    { label: "States Covered", value: "36", icon: MapPin }
+    { label: t('stats.total_schemes'), value: "150+", icon: Award },
+    { label: t('stats.beneficiaries'), value: "25 Cr+", icon: TrendingUp },
+    { label: t('stats.budget'), value: "₹2.8L Cr", icon: FileText },
+    { label: t('stats.states'), value: "36", icon: MapPin }
   ];
 
   const handleNotificationClick = () => {
     toast({
-      title: "Notifications",
+      title: t('header.notifications'),
       description: "You have 3 new scheme updates available",
     });
   };
@@ -203,7 +204,7 @@ const Index = () => {
       {/* New Features Section */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto">
-          <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">New Features</h3>
+          <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">{t('features.new')}</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <Card 
               className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
@@ -211,10 +212,10 @@ const Index = () => {
             >
               <CardContent className="p-6 text-center">
                 <FileText className="h-12 w-12 text-green-600 mx-auto mb-4" />
-                <h4 className="font-semibold text-green-800 mb-2">Schemes Database</h4>
-                <p className="text-sm text-green-600">Browse comprehensive database of all government schemes</p>
+                <h4 className="font-semibold text-green-800 mb-2">{t('features.schemes_db')}</h4>
+                <p className="text-sm text-green-600">{t('features.schemes_desc')}</p>
                 <Button className="mt-4 w-full bg-green-600 hover:bg-green-700">
-                  Explore Schemes
+                  {t('features.explore')}
                 </Button>
               </CardContent>
             </Card>
@@ -225,10 +226,10 @@ const Index = () => {
             >
               <CardContent className="p-6 text-center">
                 <CheckCircle className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h4 className="font-semibold text-green-800 mb-2">Eligibility Checker</h4>
-                <p className="text-sm text-green-600">Check your eligibility for multiple schemes instantly</p>
+                <h4 className="font-semibold text-green-800 mb-2">{t('features.eligibility')}</h4>
+                <p className="text-sm text-green-600">{t('features.eligibility_desc')}</p>
                 <Button className="mt-4 w-full bg-blue-600 hover:bg-blue-700" variant="secondary">
-                  Check Eligibility
+                  {t('features.check')}
                 </Button>
               </CardContent>
             </Card>
@@ -239,10 +240,10 @@ const Index = () => {
             >
               <CardContent className="p-6 text-center">
                 <Upload className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                <h4 className="font-semibold text-green-800 mb-2">Document Upload</h4>
-                <p className="text-sm text-green-600">Upload and manage your application documents</p>
+                <h4 className="font-semibold text-green-800 mb-2">{t('features.documents')}</h4>
+                <p className="text-sm text-green-600">{t('features.documents_desc')}</p>
                 <Button className="mt-4 w-full bg-purple-600 hover:bg-purple-700" variant="secondary">
-                  Upload Documents
+                  {t('features.upload')}
                 </Button>
               </CardContent>
             </Card>
@@ -253,10 +254,10 @@ const Index = () => {
             >
               <CardContent className="p-6 text-center">
                 <Bell className="h-12 w-12 text-orange-600 mx-auto mb-4" />
-                <h4 className="font-semibold text-green-800 mb-2">Application Status</h4>
-                <p className="text-sm text-green-600">Track your application progress</p>
+                <h4 className="font-semibold text-green-800 mb-2">{t('features.status')}</h4>
+                <p className="text-sm text-green-600">{t('features.status_desc')}</p>
                 <Button className="mt-4 w-full bg-orange-600 hover:bg-orange-700" variant="secondary">
-                  Check Status
+                  {t('features.track')}
                 </Button>
               </CardContent>
             </Card>
@@ -267,7 +268,7 @@ const Index = () => {
       {/* Featured Schemes */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto">
-          <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">Featured Schemes</h3>
+          <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">{t('schemes.featured')}</h3>
           <div className="grid md:grid-cols-3 gap-8">
             {featuredSchemes.map((scheme) => (
               <Card key={scheme.id} className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -286,15 +287,15 @@ const Index = () => {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">Benefit Amount:</span>
+                      <span className="text-sm font-medium text-green-700">{t('schemes.amount')}:</span>
                       <span className="text-sm font-bold text-green-800">{scheme.amount}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">Beneficiaries:</span>
+                      <span className="text-sm font-medium text-green-700">{t('schemes.beneficiaries')}:</span>
                       <span className="text-sm font-bold text-green-800">{scheme.beneficiaries}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">Deadline:</span>
+                      <span className="text-sm font-medium text-green-700">{t('schemes.deadline')}:</span>
                       <span className="text-sm font-bold text-green-800">{scheme.deadline}</span>
                     </div>
                     <div className="pt-4 space-y-2">
@@ -302,10 +303,10 @@ const Index = () => {
                         className="w-full bg-green-600 hover:bg-green-700"
                         onClick={() => handleSchemeApply(scheme.title)}
                       >
-                        Apply Now
+                        {t('schemes.apply')}
                       </Button>
                       <Button variant="outline" className="w-full border-green-200 hover:bg-green-50">
-                        View Details
+                        {t('schemes.details')}
                       </Button>
                     </div>
                   </div>
@@ -320,10 +321,10 @@ const Index = () => {
       <section className="py-12 px-4 bg-green-50">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
-            <h3 className="text-3xl font-bold text-green-800">Latest News & Updates</h3>
+            <h3 className="text-3xl font-bold text-green-800">{t('news.title')}</h3>
             <Button variant="outline" className="border-green-200 hover:bg-green-100">
               <BookOpen className="h-4 w-4 mr-2" />
-              View All News
+              {t('news.view_all')}
             </Button>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -350,13 +351,13 @@ const Index = () => {
       {/* Quick Access */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto text-center">
-          <h3 className="text-3xl font-bold text-green-800 mb-8">Quick Access</h3>
+          <h3 className="text-3xl font-bold text-green-800 mb-8">{t('quick.title')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { title: "All Schemes", icon: Award, color: "green", action: "schemes" },
-              { title: "Document Upload", icon: Upload, color: "blue", action: "documents" },
-              { title: "Application Status", icon: CheckCircle, color: "purple", action: "status" },
-              { title: "Contact Support", icon: Phone, color: "orange", action: "support" }
+              { title: t('nav.schemes'), icon: Award, color: "green", action: "schemes" },
+              { title: t('nav.documents'), icon: Upload, color: "blue", action: "documents" },
+              { title: t('nav.status'), icon: CheckCircle, color: "purple", action: "status" },
+              { title: t('nav.support'), icon: Phone, color: "orange", action: "support" }
             ].map((item, index) => (
               <Card 
                 key={index} 
@@ -381,10 +382,10 @@ const Index = () => {
             <span className="text-xl font-bold">{t('app.title')}</span>
           </div>
           <p className="text-green-200 mb-4">
-            Connecting farmers with government schemes for a prosperous agricultural future
+            {t('footer.tagline')}
           </p>
           <div className="text-sm text-green-300">
-            © 2024 {t('app.title')}. A Government of India Initiative
+            © 2024 {t('app.title')}. {t('footer.copyright')}
           </div>
         </div>
       </footer>

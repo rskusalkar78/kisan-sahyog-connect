@@ -3,10 +3,12 @@ import SchemeHeader from "@/components/SchemeHeader";
 import SearchAndFilter from "@/components/SearchAndFilter";
 import SchemeResults from "@/components/SchemeResults";
 import SchemeCard from "@/components/SchemeCard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Schemes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const { t } = useLanguage();
 
   const categories = ["All", "Income Support", "Insurance", "Subsidy", "Loan", "Technology", "Soil Health", "Marketing", "Irrigation", "Seeds", "Equipment"];
 
