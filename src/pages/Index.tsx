@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,11 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot, Upload, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const featuredSchemes = [
     {
@@ -133,11 +135,12 @@ const Index = () => {
                 <Award className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-green-800">Agriconnect</h1>
-                <p className="text-sm text-green-600">Government Schemes Portal</p>
+                <h1 className="text-2xl font-bold text-green-800">{t('app.title')}</h1>
+                <p className="text-sm text-green-600">{t('app.subtitle')}</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <LanguageSwitcher />
               <Button
                 variant="outline"
                 size="sm"
@@ -145,10 +148,10 @@ const Index = () => {
                 className="border-green-200 hover:bg-green-50"
               >
                 <Bell className="h-4 w-4 mr-2" />
-                Notifications
+                {t('header.notifications')}
               </Button>
               <Button className="bg-green-600 hover:bg-green-700">
-                Login / Register
+                {t('header.login')}
               </Button>
             </div>
           </div>
@@ -159,10 +162,10 @@ const Index = () => {
       <section className="py-12 px-4">
         <div className="container mx-auto text-center">
           <h2 className="text-4xl font-bold text-green-800 mb-4">
-            Empowering Farmers with Government Schemes
+            {t('hero.title')}
           </h2>
           <p className="text-xl text-green-700 mb-8 max-w-3xl mx-auto">
-            Access real-time information about government policies, subsidies, and schemes designed to support Indian agriculture
+            {t('hero.subtitle')}
           </p>
           
           {/* Search Bar */}
@@ -171,13 +174,13 @@ const Index = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-5 w-5" />
               <Input
                 type="text"
-                placeholder="Search for schemes, policies, or benefits..."
+                placeholder={t('search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 py-6 text-lg border-green-200 focus:border-green-400 focus:ring-green-400"
               />
               <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-600 hover:bg-green-700">
-                Search
+                {t('search.button')}
               </Button>
             </div>
           </div>
@@ -375,13 +378,13 @@ const Index = () => {
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center space-x-3 mb-4">
             <Award className="h-6 w-6" />
-            <span className="text-xl font-bold">Agriconnect</span>
+            <span className="text-xl font-bold">{t('app.title')}</span>
           </div>
           <p className="text-green-200 mb-4">
             Connecting farmers with government schemes for a prosperous agricultural future
           </p>
           <div className="text-sm text-green-300">
-            © 2024 Agriconnect. A Government of India Initiative
+            © 2024 {t('app.title')}. A Government of India Initiative
           </div>
         </div>
       </footer>
