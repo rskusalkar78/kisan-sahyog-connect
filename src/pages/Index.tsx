@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot } from "lucide-react";
+import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot, Upload, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -90,25 +91,28 @@ const Index = () => {
         navigate("/schemes");
         break;
       case "eligibility":
-        toast({
-          title: "Eligibility Checker",
-          description: "Opening eligibility checker...",
-        });
-        // Could navigate to eligibility checker page
+        navigate("/eligibility");
+        break;
+      case "documents":
+        navigate("/documents");
+        break;
+      case "status":
+        navigate("/status");
+        break;
+      case "support":
+        navigate("/support");
         break;
       case "assistant":
         toast({
           title: "Application Assistant",
           description: "Opening AI-powered application assistant...",
         });
-        // Could navigate to application assistant page
         break;
       case "alerts":
         toast({
           title: "Real-Time Alerts",
           description: "Opening real-time alerts dashboard...",
         });
-        // Could navigate to alerts page
         break;
       default:
         toast({
@@ -129,7 +133,7 @@ const Index = () => {
                 <Award className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-green-800">KisanConnect</h1>
+                <h1 className="text-2xl font-bold text-green-800">Agriconnect</h1>
                 <p className="text-sm text-green-600">Government Schemes Portal</p>
               </div>
             </div>
@@ -228,28 +232,28 @@ const Index = () => {
 
             <Card 
               className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-              onClick={() => handleFeatureClick("assistant")}
+              onClick={() => handleFeatureClick("documents")}
             >
               <CardContent className="p-6 text-center">
-                <Bot className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                <h4 className="font-semibold text-green-800 mb-2">Application Assistant</h4>
-                <p className="text-sm text-green-600">AI-powered help for completing applications</p>
+                <Upload className="h-12 w-12 text-purple-600 mx-auto mb-4" />
+                <h4 className="font-semibold text-green-800 mb-2">Document Upload</h4>
+                <p className="text-sm text-green-600">Upload and manage your application documents</p>
                 <Button className="mt-4 w-full bg-purple-600 hover:bg-purple-700" variant="secondary">
-                  Get Help
+                  Upload Documents
                 </Button>
               </CardContent>
             </Card>
 
             <Card 
               className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-              onClick={() => handleFeatureClick("alerts")}
+              onClick={() => handleFeatureClick("status")}
             >
               <CardContent className="p-6 text-center">
                 <Bell className="h-12 w-12 text-orange-600 mx-auto mb-4" />
-                <h4 className="font-semibold text-green-800 mb-2">Real-Time Alerts</h4>
-                <p className="text-sm text-green-600">Get instant notifications about scheme updates</p>
+                <h4 className="font-semibold text-green-800 mb-2">Application Status</h4>
+                <p className="text-sm text-green-600">Track your application progress</p>
                 <Button className="mt-4 w-full bg-orange-600 hover:bg-orange-700" variant="secondary">
-                  View Alerts
+                  Check Status
                 </Button>
               </CardContent>
             </Card>
@@ -347,9 +351,9 @@ const Index = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { title: "All Schemes", icon: Award, color: "green", action: "schemes" },
-              { title: "Document Support", icon: FileText, color: "blue", action: "documents" },
+              { title: "Document Upload", icon: Upload, color: "blue", action: "documents" },
               { title: "Application Status", icon: CheckCircle, color: "purple", action: "status" },
-              { title: "Contact Support", icon: MapPin, color: "orange", action: "support" }
+              { title: "Contact Support", icon: Phone, color: "orange", action: "support" }
             ].map((item, index) => (
               <Card 
                 key={index} 
@@ -371,13 +375,13 @@ const Index = () => {
         <div className="container mx-auto text-center">
           <div className="flex items-center justify-center space-x-3 mb-4">
             <Award className="h-6 w-6" />
-            <span className="text-xl font-bold">KisanConnect</span>
+            <span className="text-xl font-bold">Agriconnect</span>
           </div>
           <p className="text-green-200 mb-4">
             Connecting farmers with government schemes for a prosperous agricultural future
           </p>
           <div className="text-sm text-green-300">
-            © 2024 KisanConnect. A Government of India Initiative
+            © 2024 Agriconnect. A Government of India Initiative
           </div>
         </div>
       </footer>
