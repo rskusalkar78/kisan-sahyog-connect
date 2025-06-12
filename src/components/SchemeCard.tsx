@@ -108,37 +108,37 @@ const SchemeCard = ({ scheme }: SchemeCardProps) => {
 
   return (
     <>
-      <Card className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white">
+      <Card className="farmer-card border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
         <CardHeader>
           <div className="flex justify-between items-start mb-2">
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Badge variant="secondary" className="bg-secondary text-secondary-foreground">
               {scheme.category}
             </Badge>
-            <Badge variant="outline" className="border-green-500 text-green-700">
+            <Badge variant="outline" className="border-primary text-primary">
               {scheme.status}
             </Badge>
           </div>
-          <CardTitle className="text-green-800 text-lg leading-tight">{scheme.title}</CardTitle>
-          <CardDescription className="text-green-600 text-sm">{scheme.description}</CardDescription>
+          <CardTitle className="farmer-text-accent text-lg leading-tight">{scheme.title}</CardTitle>
+          <CardDescription className="farmer-text-muted text-sm">{scheme.description}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div className="flex justify-between">
-                <span className="font-medium text-green-700">{t('schemes.amount')}:</span>
-                <span className="font-bold text-green-800">{scheme.amount}</span>
+                <span className="font-medium farmer-text-muted">{t('schemes.amount')}:</span>
+                <span className="font-bold farmer-text">{scheme.amount}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium text-green-700">{t('schemes.beneficiaries')}:</span>
-                <span className="font-bold text-green-800">{scheme.beneficiaries}</span>
+                <span className="font-medium farmer-text-muted">{t('schemes.beneficiaries')}:</span>
+                <span className="font-bold farmer-text">{scheme.beneficiaries}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium text-green-700">{t('schemes.deadline')}:</span>
-                <span className="font-bold text-green-800">{scheme.deadline}</span>
+                <span className="font-medium farmer-text-muted">{t('schemes.deadline')}:</span>
+                <span className="font-bold farmer-text">{scheme.deadline}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium text-green-700">{t('schemes.state')}:</span>
-                <span className="font-bold text-green-800">{scheme.state}</span>
+                <span className="font-medium farmer-text-muted">{t('schemes.state')}:</span>
+                <span className="font-bold farmer-text">{scheme.state}</span>
               </div>
             </div>
             
@@ -146,23 +146,23 @@ const SchemeCard = ({ scheme }: SchemeCardProps) => {
             {eligibilityResult && (
               <div className={`p-3 rounded-lg border ${
                 eligibilityResult.isEligible 
-                  ? 'bg-green-50 border-green-200' 
-                  : 'bg-red-50 border-red-200'
+                  ? 'bg-secondary border-primary/20' 
+                  : 'bg-destructive/10 border-destructive/20'
               }`}>
                 <div className="flex items-center space-x-2">
                   {eligibilityResult.isEligible ? (
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <CheckCircle className="h-4 w-4 text-primary" />
                   ) : (
-                    <XCircle className="h-4 w-4 text-red-600" />
+                    <XCircle className="h-4 w-4 text-destructive" />
                   )}
                   <span className={`text-sm font-medium ${
-                    eligibilityResult.isEligible ? 'text-green-800' : 'text-red-800'
+                    eligibilityResult.isEligible ? 'text-primary' : 'text-destructive'
                   }`}>
                     {eligibilityResult.isEligible ? t('eligibility.eligible') : t('eligibility.not_eligible')}
                   </span>
                 </div>
                 {!eligibilityResult.isEligible && eligibilityResult.missingCriteria.length > 0 && (
-                  <ul className="mt-2 text-xs text-red-700 list-disc list-inside">
+                  <ul className="mt-2 text-xs text-destructive list-disc list-inside">
                     {eligibilityResult.missingCriteria.map((criteria, index) => (
                       <li key={index}>{criteria}</li>
                     ))}
@@ -176,7 +176,7 @@ const SchemeCard = ({ scheme }: SchemeCardProps) => {
                 onClick={checkEligibility}
                 disabled={isCheckingEligibility}
                 variant="outline"
-                className="w-full border-blue-200 hover:bg-blue-50 text-blue-700"
+                className="w-full border-border hover:bg-accent text-accent-foreground"
               >
                 <User className="h-4 w-4 mr-2" />
                 {isCheckingEligibility ? t('eligibility.checking') : t('eligibility.check')}
@@ -185,16 +185,16 @@ const SchemeCard = ({ scheme }: SchemeCardProps) => {
               <Button 
                 onClick={handleApplyClick}
                 disabled={!eligibilityResult || !eligibilityResult.isEligible}
-                className={`w-full ${
+                className={`w-full farmer-button ${
                   eligibilityResult?.isEligible 
-                    ? 'bg-green-600 hover:bg-green-700' 
-                    : 'bg-gray-400 cursor-not-allowed'
+                    ? '' 
+                    : 'opacity-50 cursor-not-allowed'
                 }`}
               >
                 {t('schemes.apply')}
               </Button>
               
-              <Button variant="outline" className="w-full border-green-200 hover:bg-green-50">
+              <Button variant="outline" className="w-full border-border hover:bg-accent">
                 {t('schemes.details')}
               </Button>
             </div>
