@@ -1,51 +1,51 @@
 
-import { Globe } from "lucide-react";
+import { Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
 
 const LanguageSwitcher = () => {
-  const { language, setLanguage } = useLanguage();
+  const { currentLanguage, setLanguage } = useLanguage();
 
-  const languages: { code: Language; name: string; nativeName: string }[] = [
-    { code: 'en', name: 'English', nativeName: 'English' },
-    { code: 'mr', name: 'Marathi', nativeName: 'मराठी' },
-    { code: 'hi', name: 'Hindi', nativeName: 'हिंदी' },
-    { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' },
-    { code: 'te', name: 'Telugu', nativeName: 'తెలుగు' },
-    { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
+  const languages = [
+    { code: 'en' as Language, name: 'English', nativeName: 'English' },
+    { code: 'hi' as Language, name: 'Hindi', nativeName: 'हिंदी' },
+    { code: 'mr' as Language, name: 'Marathi', nativeName: 'मराठी' },
+    { code: 'ta' as Language, name: 'Tamil', nativeName: 'தமிழ்' },
+    { code: 'te' as Language, name: 'Telugu', nativeName: 'తెలుగు' },
+    { code: 'kn' as Language, name: 'Kannada', nativeName: 'ಕನ್ನಡ' },
   ];
 
-  const currentLang = languages.find(lang => lang.code === language);
+  const getCurrentLanguageName = () => {
+    const lang = languages.find(l => l.code === currentLanguage);
+    return lang ? lang.nativeName : 'English';
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="bg-card border-border hover:bg-accent hover:text-accent-foreground">
-          <Globe className="h-4 w-4 mr-2" />
-          {currentLang?.nativeName || 'English'}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-card border-border">
-        {languages.map((lang) => (
-          <DropdownMenuItem
-            key={lang.code}
-            onClick={() => setLanguage(lang.code)}
-            className={`hover:bg-accent hover:text-accent-foreground ${
-              language === lang.code ? 'bg-accent text-accent-foreground' : ''
-            }`}
-          >
-            <span className="font-medium">{lang.nativeName}</span>
-            <span className="text-muted-foreground ml-2">({lang.name})</span>
-          </DropdownMenuItem>
+    <Select value={currentLanguage} onValueChange={(value: Language) => setLanguage(value)}>
+      <SelectTrigger className="w-auto border-green-200 hover:bg-green-50 focus:ring-green-400 focus:border-green-400">
+        <div className="flex items-center space-x-2">
+          <Languages className="h-4 w-4 text-green-600" />
+          <SelectValue placeholder={getCurrentLanguageName()} />
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        {languages.map((language) => (
+          <SelectItem key={language.code} value={language.code}>
+            <div className="flex items-center space-x-2">
+              <span className="font-medium">{language.nativeName}</span>
+              <span className="text-sm text-muted-foreground">({language.name})</span>
+            </div>
+          </SelectItem>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </SelectContent>
+    </Select>
   );
 };
 

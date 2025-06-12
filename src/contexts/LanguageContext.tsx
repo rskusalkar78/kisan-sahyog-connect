@@ -1,350 +1,665 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type Language = 'en' | 'mr' | 'hi' | 'ta' | 'te' | 'kn';
+export type Language = 'en' | 'hi' | 'mr' | 'ta' | 'te' | 'kn';
 
-interface LanguageContextProps {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+interface LanguageContextType {
+  currentLanguage: Language;
+  setLanguage: (language: Language) => void;
   t: (key: string) => string;
 }
 
-const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
-
-const translations: Record<Language, Record<string, string>> = {
-  en: {
-    // Navigation
-    'nav.home': 'Home',
-    'nav.schemes': 'Schemes',
-    'nav.eligibility': 'Eligibility Check',
-    'nav.documents': 'Documents',
-    'nav.status': 'Application Status',
-    'nav.support': 'Support',
-    
-    // Home page
-    'home.title': 'AgriConnect',
-    'home.subtitle': 'Your Digital Gateway to Agricultural Schemes',
-    'home.description': 'Discover, apply for, and track government agricultural schemes designed to support farmers across India.',
-    'home.get_started': 'Get Started',
-    'home.explore_schemes': 'Explore Schemes',
-    
-    // Schemes
-    'schemes.title': 'Government Schemes',
-    'schemes.search_placeholder': 'Search schemes...',
-    'schemes.filter_by_category': 'Filter by Category',
-    'schemes.amount': 'Amount',
-    'schemes.deadline': 'Deadline',
-    'schemes.beneficiaries': 'Beneficiaries',
-    'schemes.state': 'State',
-    'schemes.apply': 'Apply Now',
-    'schemes.details': 'View Details',
-    'schemes.results': 'Showing {count} of {total} schemes',
-    
-    // Eligibility
-    'eligibility.check': 'Check Eligibility',
-    'eligibility.checking': 'Checking...',
-    'eligibility.eligible': 'Eligible',
-    'eligibility.not_eligible': 'Not Eligible',
-    'eligibility.can_apply': 'You can apply for this scheme',
-    'eligibility.cannot_apply': 'You cannot apply for this scheme',
-    'eligibility.check_first': 'Check Eligibility First',
-    'eligibility.check_before_apply': 'Please check your eligibility before applying',
-    'eligibility.requirements_missing': 'requirements missing',
-    'eligibility.land_size_required': 'Land size requirement not met',
-    'eligibility.bank_account_required': 'Bank account required',
-    'eligibility.age_requirement': 'Age requirement not met',
-    
-    // Common
-    'common.loading': 'Loading...',
-    'common.error': 'Error',
-    'common.success': 'Success',
-    'common.cancel': 'Cancel',
-    'common.save': 'Save',
-    'common.submit': 'Submit',
-    'common.close': 'Close',
-  },
-  mr: {
-    // Navigation
-    'nav.home': 'मुख्यपृष्ठ',
-    'nav.schemes': 'योजना',
-    'nav.eligibility': 'पात्रता तपासणी',
-    'nav.documents': 'कागदपत्रे',
-    'nav.status': 'अर्जाची स्थिती',
-    'nav.support': 'सहाय्य',
-    
-    // Home page
-    'home.title': 'कृषी कनेक्ट',
-    'home.subtitle': 'कृषी योजनांसाठी तुमचे डिजिटल द्वार',
-    'home.description': 'भारतातील शेतकऱ्यांना मदत करण्यासाठी डिझाइन केलेल्या सरकारी कृषी योजना शोधा, त्यांच्यासाठी अर्ज करा आणि त्यांचा मागोवा घ्या.',
-    'home.get_started': 'सुरुवात करा',
-    'home.explore_schemes': 'योजना पहा',
-    
-    // Schemes
-    'schemes.title': 'सरकारी योजना',
-    'schemes.search_placeholder': 'योजना शोधा...',
-    'schemes.filter_by_category': 'श्रेणीनुसार फिल्टर करा',
-    'schemes.amount': 'रक्कम',
-    'schemes.deadline': 'शेवटची तारीख',
-    'schemes.beneficiaries': 'लाभार्थी',
-    'schemes.state': 'राज्य',
-    'schemes.apply': 'आता अर्ज करा',
-    'schemes.details': 'तपशील पहा',
-    'schemes.results': '{total} पैकी {count} योजना दाखवत आहे',
-    
-    // Eligibility
-    'eligibility.check': 'पात्रता तपासा',
-    'eligibility.checking': 'तपासत आहे...',
-    'eligibility.eligible': 'पात्र',
-    'eligibility.not_eligible': 'अपात्र',
-    'eligibility.can_apply': 'तुम्ही या योजनेसाठी अर्ज करू शकता',
-    'eligibility.cannot_apply': 'तुम्ही या योजनेसाठी अर्ज करू शकत नाही',
-    'eligibility.check_first': 'प्रथम पात्रता तपासा',
-    'eligibility.check_before_apply': 'कृपया अर्ज करण्यापूर्वी तुमची पात्रता तपासा',
-    'eligibility.requirements_missing': 'आवश्यकता अनुपस्थित',
-    'eligibility.land_size_required': 'जमीन आकाराची आवश्यकता पूर्ण नाही',
-    'eligibility.bank_account_required': 'बँक खाते आवश्यक',
-    'eligibility.age_requirement': 'वयाची आवश्यकता पूर्ण नाही',
-    
-    // Common
-    'common.loading': 'लोड होत आहे...',
-    'common.error': 'त्रुटी',
-    'common.success': 'यशस्वी',
-    'common.cancel': 'रद्द करा',
-    'common.save': 'जतन करा',
-    'common.submit': 'सबमिट करा',
-    'common.close': 'बंद करा',
-  },
-  hi: {
-    // Navigation
-    'nav.home': 'होम',
-    'nav.schemes': 'योजनाएं',
-    'nav.eligibility': 'पात्रता जांच',
-    'nav.documents': 'दस्तावेज़',
-    'nav.status': 'आवेदन स्थिति',
-    'nav.support': 'सहायता',
-    
-    // Home page
-    'home.title': 'कृषि कनेक्ट',
-    'home.subtitle': 'कृषि योजनाओं के लिए आपका डिजिटल द्वार',
-    'home.description': 'भारत भर के किसानों की सहायता के लिए डिज़ाइन की गई सरकारी कृषि योजनाओं को खोजें, आवेदन करें और ट्रैक करें।',
-    'home.get_started': 'शुरू करें',
-    'home.explore_schemes': 'योजनाएं देखें',
-    
-    // Schemes
-    'schemes.title': 'सरकारी योजनाएं',
-    'schemes.search_placeholder': 'योजनाएं खोजें...',
-    'schemes.filter_by_category': 'श्रेणी के अनुसार फ़िल्टर करें',
-    'schemes.amount': 'राशि',
-    'schemes.deadline': 'अंतिम तिथि',
-    'schemes.beneficiaries': 'लाभार्थी',
-    'schemes.state': 'राज्य',
-    'schemes.apply': 'अभी आवेदन करें',
-    'schemes.details': 'विवरण देखें',
-    'schemes.results': '{total} में से {count} योजनाएं दिखा रहे हैं',
-    
-    // Eligibility
-    'eligibility.check': 'पात्रता जांचें',
-    'eligibility.checking': 'जांच रहे हैं...',
-    'eligibility.eligible': 'पात्र',
-    'eligibility.not_eligible': 'अपात्र',
-    'eligibility.can_apply': 'आप इस योजना के लिए आवेदन कर सकते हैं',
-    'eligibility.cannot_apply': 'आप इस योजना के लिए आवेदन नहीं कर सकते',
-    'eligibility.check_first': 'पहले पात्रता जांचें',
-    'eligibility.check_before_apply': 'कृपया आवेदन करने से पहले अपनी पात्रता जांचें',
-    'eligibility.requirements_missing': 'आवश्यकताएं अनुपस्थित',
-    'eligibility.land_size_required': 'भूमि आकार की आवश्यकता पूरी नहीं',
-    'eligibility.bank_account_required': 'बैंक खाता आवश्यक',
-    'eligibility.age_requirement': 'आयु की आवश्यकता पूरी नहीं',
-    
-    // Common
-    'common.loading': 'लोड हो रहा है...',
-    'common.error': 'त्रुटि',
-    'common.success': 'सफल',
-    'common.cancel': 'रद्द करें',
-    'common.save': 'सेव करें',
-    'common.submit': 'सबमिट करें',
-    'common.close': 'बंद करें',
-  },
-  ta: {
-    // Navigation
-    'nav.home': 'முகப்பு',
-    'nav.schemes': 'திட்டங்கள்',
-    'nav.eligibility': 'தகுதி சரிபார்ப்பு',
-    'nav.documents': 'ஆவணங்கள்',
-    'nav.status': 'விண்ணப்ப நிலை',
-    'nav.support': 'ஆதரவு',
-    
-    // Home page
-    'home.title': 'விவசாய இணைப்பு',
-    'home.subtitle': 'விவசாய திட்டங்களுக்கான உங்கள் டிஜிட்டல் நுழைவாயில்',
-    'home.description': 'இந்தியா முழுவதும் உள்ள விவசாயிகளுக்கு உதவ வடிவமைக்கப்பட்ட அரசு விவசாய திட்டங்களை கண்டறியவும், விண்ணப்பிக்கவும், கண்காணிக்கவும்.',
-    'home.get_started': 'தொடங்குங்கள்',
-    'home.explore_schemes': 'திட்டங்களை ஆராயுங்கள்',
-    
-    // Schemes
-    'schemes.title': 'அரசு திட்டங்கள்',
-    'schemes.search_placeholder': 'திட்டங்களை தேடுங்கள்...',
-    'schemes.filter_by_category': 'வகையால் வடிகட்டுங்கள்',
-    'schemes.amount': 'தொகை',
-    'schemes.deadline': 'கடைசி தேதி',
-    'schemes.beneficiaries': 'பயனாளிகள்',
-    'schemes.state': 'மாநிலம்',
-    'schemes.apply': 'இப்போது விண்ணப்பிக்கவும்',
-    'schemes.details': 'விவரங்களை பார்க்கவும்',
-    'schemes.results': '{total} இல் {count} திட்டங்களை காட்டுகிறது',
-    
-    // Eligibility
-    'eligibility.check': 'தகுதியை சரிபார்க்கவும்',
-    'eligibility.checking': 'சரிபார்க்கிறது...',
-    'eligibility.eligible': 'தகுதியுள்ள',
-    'eligibility.not_eligible': 'தகுதியற்ற',
-    'eligibility.can_apply': 'நீங்கள் இந்த திட்டத்திற்கு விண்ணப்பிக்கலாம்',
-    'eligibility.cannot_apply': 'நீங்கள் இந்த திட்டத்திற்கு விண்ணப்பிக்க முடியாது',
-    'eligibility.check_first': 'முதலில் தகுதியை சரிபார்க்கவும்',
-    'eligibility.check_before_apply': 'விண்ணப்பிக்கும் முன் உங்கள் தகுதியை சரிபார்க்கவும்',
-    'eligibility.requirements_missing': 'தேவைகள் விடுபட்டுள்ளன',
-    'eligibility.land_size_required': 'நில அளவு தேவை பூர்த்தி செய்யப்படவில்லை',
-    'eligibility.bank_account_required': 'வங்கி கணக்கு தேவை',
-    'eligibility.age_requirement': 'வயது தேவை பூர்த்தி செய்யப்படவில்லை',
-    
-    // Common
-    'common.loading': 'ஏற்றுகிறது...',
-    'common.error': 'பிழை',
-    'common.success': 'வெற்றி',
-    'common.cancel': 'ரத்து செய்',
-    'common.save': 'சேமிக்கவும்',
-    'common.submit': 'சமர்ப்பிக்கவும்',
-    'common.close': 'மூடு',
-  },
-  te: {
-    // Navigation
-    'nav.home': 'హోమ్',
-    'nav.schemes': 'పథకాలు',
-    'nav.eligibility': 'అర్హత తనిఖీ',
-    'nav.documents': 'పత్రాలు',
-    'nav.status': 'దరఖాస్తు స్థితి',
-    'nav.support': 'మద్దతు',
-    
-    // Home page
-    'home.title': 'వ్యవసాయ కనెక్ట్',
-    'home.subtitle': 'వ్యవసాయ పథకాలకు మీ డిజిటల్ గేట్‌వే',
-    'home.description': 'భారతదేశంలోని రైతులకు మద్దతు ఇవ్వడానికి రూపొందించిన ప్రభుత్వ వ్యవసాయ పథకాలను కనుగొనండి, దరఖాస్తు చేసుకోండి మరియు ట్రాక్ చేయండి.',
-    'home.get_started': 'ప్రారంభించండి',
-    'home.explore_schemes': 'పథకాలను అన్వేషించండి',
-    
-    // Schemes
-    'schemes.title': 'ప్రభుత్వ పథకాలు',
-    'schemes.search_placeholder': 'పథకాలను వెతకండి...',
-    'schemes.filter_by_category': 'వర్గం ప్రకారం ఫిల్టర్ చేయండి',
-    'schemes.amount': 'మొత్తం',
-    'schemes.deadline': 'చివరి తేదీ',
-    'schemes.beneficiaries': 'లబ్ధిదారులు',
-    'schemes.state': 'రాష్ట్రం',
-    'schemes.apply': 'ఇప్పుడే దరఖాస్తు చేయండి',
-    'schemes.details': 'వివరాలను చూడండి',
-    'schemes.results': '{total} లో {count} పథకాలను చూపిస్తోంది',
-    
-    // Eligibility
-    'eligibility.check': 'అర్హతను తనిఖీ చేయండి',
-    'eligibility.checking': 'తనిఖీ చేస్తోంది...',
-    'eligibility.eligible': 'అర్హత ఉంది',
-    'eligibility.not_eligible': 'అర్హత లేదు',
-    'eligibility.can_apply': 'మీరు ఈ పథకానికి దరఖాస్తు చేసుకోవచ్చు',
-    'eligibility.cannot_apply': 'మీరు ఈ పథకానికి దరఖాస్తు చేసుకోలేరు',
-    'eligibility.check_first': 'మొదట అర్హతను తనిఖీ చేయండి',
-    'eligibility.check_before_apply': 'దరఖాస్తు చేసే ముందు మీ అర్హతను తనిఖీ చేయండి',
-    'eligibility.requirements_missing': 'అవసరాలు లేకపోవడం',
-    'eligibility.land_size_required': 'భూమి పరిమాణం అవసరం తీర్చబడలేదు',
-    'eligibility.bank_account_required': 'బ్యాంక్ ఖాతా అవసరం',
-    'eligibility.age_requirement': 'వయస్సు అవసరం తీర్చబడలేదు',
-    
-    // Common
-    'common.loading': 'లోడ్ అవుతోంది...',
-    'common.error': 'లోపం',
-    'common.success': 'విజయం',
-    'common.cancel': 'రద్దు చేయండి',
-    'common.save': 'సేవ్ చేయండి',
-    'common.submit': 'సమర్పించండి',
-    'common.close': 'మూసివేయండి',
-  },
-  kn: {
-    // Navigation
-    'nav.home': 'ಮುಖ್ಯಪುಟ',
-    'nav.schemes': 'ಯೋಜನೆಗಳು',
-    'nav.eligibility': 'ಅರ್ಹತೆ ಪರಿಶೀಲನೆ',
-    'nav.documents': 'ದಾಖಲೆಗಳು',
-    'nav.status': 'ಅರ್ಜಿ ಸ್ಥಿತಿ',
-    'nav.support': 'ಬೆಂಬಲ',
-    
-    // Home page
-    'home.title': 'ಕೃಷಿ ಸಂಪರ್ಕ',
-    'home.subtitle': 'ಕೃಷಿ ಯೋಜನೆಗಳಿಗೆ ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಗೇಟ್‌ವೇ',
-    'home.description': 'ಭಾರತದಾದ್ಯಂತ ರೈತರನ್ನು ಬೆಂಬಲಿಸಲು ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಸರ್ಕಾರಿ ಕೃಷಿ ಯೋಜನೆಗಳನ್ನು ಅನ್ವೇಷಿಸಿ, ಅರ್ಜಿ ಸಲ್ಲಿಸಿ ಮತ್ತು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ.',
-    'home.get_started': 'ಪ್ರಾರಂಭಿಸಿ',
-    'home.explore_schemes': 'ಯೋಜನೆಗಳನ್ನು ಅನ್ವೇಷಿಸಿ',
-    
-    // Schemes
-    'schemes.title': 'ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು',
-    'schemes.search_placeholder': 'ಯೋಜನೆಗಳನ್ನು ಹುಡುಕಿ...',
-    'schemes.filter_by_category': 'ವರ್ಗದ ಪ್ರಕಾರ ಫಿಲ್ಟರ್ ಮಾಡಿ',
-    'schemes.amount': 'ಮೊತ್ತ',
-    'schemes.deadline': 'ಅಂತಿಮ ದಿನಾಂಕ',
-    'schemes.beneficiaries': 'ಫಲಾನುಭವಿಗಳು',
-    'schemes.state': 'ರಾಜ್ಯ',
-    'schemes.apply': 'ಈಗಲೇ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
-    'schemes.details': 'ವಿವರಗಳನ್ನು ನೋಡಿ',
-    'schemes.results': '{total} ರಲ್ಲಿ {count} ಯೋಜನೆಗಳನ್ನು ತೋರಿಸುತ್ತಿದೆ',
-    
-    // Eligibility
-    'eligibility.check': 'ಅರ್ಹತೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
-    'eligibility.checking': 'ಪರಿಶೀಲಿಸುತ್ತಿದೆ...',
-    'eligibility.eligible': 'ಅರ್ಹ',
-    'eligibility.not_eligible': 'ಅನರ್ಹ',
-    'eligibility.can_apply': 'ನೀವು ಈ ಯೋಜನೆಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಬಹುದು',
-    'eligibility.cannot_apply': 'ನೀವು ಈ ಯೋಜನೆಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ',
-    'eligibility.check_first': 'ಮೊದಲು ಅರ್ಹತೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
-    'eligibility.check_before_apply': 'ಅರ್ಜಿ ಸಲ್ಲಿಸುವ ಮೊದಲು ನಿಮ್ಮ ಅರ್ಹತೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
-    'eligibility.requirements_missing': 'ಅವಶ್ಯಕತೆಗಳು ಕಾಣೆಯಾಗಿವೆ',
-    'eligibility.land_size_required': 'ಭೂಮಿ ಗಾತ್ರದ ಅವಶ್ಯಕತೆ ಪೂರೈಸಲಾಗಿಲ್ಲ',
-    'eligibility.bank_account_required': 'ಬ್ಯಾಂಕ್ ಖಾತೆ ಅಗತ್ಯ',
-    'eligibility.age_requirement': 'ವಯಸ್ಸಿನ ಅವಶ್ಯಕತೆ ಪೂರೈಸಲಾಗಿಲ್ಲ',
-    
-    // Common
-    'common.loading': 'ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
-    'common.error': 'ದೋಷ',
-    'common.success': 'ಯಶಸ್ಸು',
-    'common.cancel': 'ರದ್ದುಗೊಳಿಸಿ',
-    'common.save': 'ಉಳಿಸಿ',
-    'common.submit': 'ಸಲ್ಲಿಸಿ',
-    'common.close': 'ಮುಚ್ಚಿ',
-  },
-};
-
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem('language');
-    return (saved as Language) || 'en';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('language', language);
-  }, [language]);
-
-  const t = (key: string): string => {
-    return translations[language][key] || key;
-  };
-
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
-      {children}
-    </LanguageContext.Provider>
-  );
-};
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
+};
+
+// Enhanced translation dictionary with comprehensive farmer-focused content
+const translations = {
+  en: {
+    // App basics
+    'app.title': 'Agriconnect',
+    'app.subtitle': 'Government Schemes Portal',
+    'header.notifications': 'Notifications',
+    'header.login': 'Login / Register',
+    
+    // Hero section
+    'hero.title': 'Empowering Farmers with Government Schemes',
+    'hero.subtitle': 'Access real-time information about government policies, subsidies, and schemes designed to support Indian agriculture',
+    'search.placeholder': 'Search for schemes, policies, or benefits...',
+    'search.button': 'Search',
+    
+    // Navigation
+    'nav.schemes': 'All Schemes',
+    'nav.eligibility': 'Eligibility Checker',
+    'nav.documents': 'Document Upload',
+    'nav.status': 'Application Status',
+    'nav.support': 'Contact Support',
+    
+    // Schemes
+    'schemes.featured': 'Featured Schemes',
+    'schemes.apply': 'Apply Now',
+    'schemes.details': 'View Details',
+    'schemes.amount': 'Benefit Amount',
+    'schemes.deadline': 'Deadline',
+    'schemes.beneficiaries': 'Beneficiaries',
+    'schemes.eligibility': 'Eligibility',
+    'schemes.category': 'Category',
+    'schemes.status': 'Status',
+    
+    // Quick stats
+    'stats.total_schemes': 'Total Schemes',
+    'stats.beneficiaries': 'Active Beneficiaries',
+    'stats.budget': 'Budget Allocated',
+    'stats.states': 'States Covered',
+    
+    // Features
+    'features.new': 'New Features',
+    'features.schemes_db': 'Schemes Database',
+    'features.schemes_desc': 'Browse comprehensive database of all government schemes',
+    'features.eligibility': 'Eligibility Checker',
+    'features.eligibility_desc': 'Check your eligibility for multiple schemes instantly',
+    'features.documents': 'Document Upload',
+    'features.documents_desc': 'Upload and manage your application documents',
+    'features.status': 'Application Status',
+    'features.status_desc': 'Track your application progress',
+    'features.explore': 'Explore Schemes',
+    'features.check': 'Check Eligibility',
+    'features.upload': 'Upload Documents',
+    'features.track': 'Check Status',
+    
+    // News and updates
+    'news.title': 'Latest News & Updates',
+    'news.view_all': 'View All News',
+    'news.policy': 'Policy Update',
+    'news.technology': 'Technology',
+    'news.subsidy': 'Subsidy',
+    
+    // Quick access
+    'quick.title': 'Quick Access',
+    'quick.support': 'Contact Support',
+    
+    // Footer
+    'footer.tagline': 'Connecting farmers with government schemes for a prosperous agricultural future',
+    'footer.copyright': 'A Government of India Initiative',
+    
+    // Forms and applications
+    'form.name': 'Full Name',
+    'form.phone': 'Phone Number',
+    'form.email': 'Email Address',
+    'form.state': 'State',
+    'form.district': 'District',
+    'form.village': 'Village',
+    'form.land_size': 'Land Size (in acres)',
+    'form.crop_type': 'Primary Crop Type',
+    'form.farming_experience': 'Farming Experience (years)',
+    'form.submit': 'Submit Application',
+    'form.required': 'Required field',
+    
+    // Farmer-specific terms
+    'farmer.land_holding': 'Land Holding',
+    'farmer.crop_season': 'Crop Season',
+    'farmer.irrigation': 'Irrigation Type',
+    'farmer.income': 'Annual Income',
+    'farmer.category': 'Farmer Category',
+    'farmer.small': 'Small Farmer',
+    'farmer.marginal': 'Marginal Farmer',
+    'farmer.large': 'Large Farmer',
+    
+    // Common actions
+    'action.apply': 'Apply',
+    'action.check': 'Check',
+    'action.upload': 'Upload',
+    'action.download': 'Download',
+    'action.continue': 'Continue',
+    'action.back': 'Back',
+    'action.next': 'Next',
+    'action.save': 'Save',
+    'action.cancel': 'Cancel'
+  },
+  
+  hi: {
+    // App basics
+    'app.title': 'एग्रीकनेक्ट',
+    'app.subtitle': 'सरकारी योजना पोर्टल',
+    'header.notifications': 'सूचनाएं',
+    'header.login': 'लॉगिन / रजिस्टर',
+    
+    // Hero section
+    'hero.title': 'सरकारी योजनाओं के साथ किसानों को सशक्त बनाना',
+    'hero.subtitle': 'भारतीय कृषि का समर्थन करने के लिए डिज़ाइन की गई सरकारी नीतियों, सब्सिडी और योजनाओं के बारे में वास्तविक समय की जानकारी प्राप्त करें',
+    'search.placeholder': 'योजनाओं, नीतियों या लाभों की खोज करें...',
+    'search.button': 'खोजें',
+    
+    // Navigation
+    'nav.schemes': 'सभी योजनाएं',
+    'nav.eligibility': 'पात्रता जांचकर्ता',
+    'nav.documents': 'दस्तावेज़ अपलोड',
+    'nav.status': 'आवेदन स्थिति',
+    'nav.support': 'संपर्क सहायता',
+    
+    // Schemes
+    'schemes.featured': 'विशेष योजनाएं',
+    'schemes.apply': 'अभी आवेदन करें',
+    'schemes.details': 'विवरण देखें',
+    'schemes.amount': 'लाभ राशि',
+    'schemes.deadline': 'अंतिम तिथि',
+    'schemes.beneficiaries': 'लाभार्थी',
+    'schemes.eligibility': 'पात्रता',
+    'schemes.category': 'श्रेणी',
+    'schemes.status': 'स्थिति',
+    
+    // Quick stats
+    'stats.total_schemes': 'कुल योजनाएं',
+    'stats.beneficiaries': 'सक्रिय लाभार्थी',
+    'stats.budget': 'आवंटित बजट',
+    'stats.states': 'कवर किए गए राज्य',
+    
+    // Features
+    'features.new': 'नई सुविधाएं',
+    'features.schemes_db': 'योजना डेटाबेस',
+    'features.schemes_desc': 'सभी सरकारी योजनाओं का व्यापक डेटाबेस ब्राउज़ करें',
+    'features.eligibility': 'पात्रता जांचकर्ता',
+    'features.eligibility_desc': 'तुरंत कई योजनाओं के लिए अपनी पात्रता जांचें',
+    'features.documents': 'दस्तावेज़ अपलोड',
+    'features.documents_desc': 'अपने आवेदन दस्तावेज़ अपलोड और प्रबंधित करें',
+    'features.status': 'आवेदन स्थिति',
+    'features.status_desc': 'अपने आवेदन की प्रगति ट्रैक करें',
+    'features.explore': 'योजनाएं देखें',
+    'features.check': 'पात्रता जांचें',
+    'features.upload': 'दस्तावेज़ अपलोड करें',
+    'features.track': 'स्थिति जांचें',
+    
+    // News and updates
+    'news.title': 'नवीनतम समाचार और अपडेट',
+    'news.view_all': 'सभी समाचार देखें',
+    'news.policy': 'नीति अपडेट',
+    'news.technology': 'प्रौद्योगिकी',
+    'news.subsidy': 'सब्सिडी',
+    
+    // Quick access
+    'quick.title': 'त्वरित पहुंच',
+    'quick.support': 'संपर्क सहायता',
+    
+    // Footer
+    'footer.tagline': 'समृद्ध कृषि भविष्य के लिए किसानों को सरकारी योजनाओं से जोड़ना',
+    'footer.copyright': 'भारत सरकार की पहल',
+    
+    // Forms and applications
+    'form.name': 'पूरा नाम',
+    'form.phone': 'फोन नंबर',
+    'form.email': 'ईमेल पता',
+    'form.state': 'राज्य',
+    'form.district': 'जिला',
+    'form.village': 'गांव',
+    'form.land_size': 'भूमि का आकार (एकड़ में)',
+    'form.crop_type': 'मुख्य फसल प्रकार',
+    'form.farming_experience': 'कृषि अनुभव (वर्ष)',
+    'form.submit': 'आवेदन जमा करें',
+    'form.required': 'आवश्यक फ़ील्ड',
+    
+    // Farmer-specific terms
+    'farmer.land_holding': 'भूमि स्वामित्व',
+    'farmer.crop_season': 'फसल मौसम',
+    'farmer.irrigation': 'सिंचाई प्रकार',
+    'farmer.income': 'वार्षिक आय',
+    'farmer.category': 'किसान श्रेणी',
+    'farmer.small': 'छोटा किसान',
+    'farmer.marginal': 'सीमांत किसान',
+    'farmer.large': 'बड़ा किसान',
+    
+    // Common actions
+    'action.apply': 'आवेदन करें',
+    'action.check': 'जांचें',
+    'action.upload': 'अपलोड करें',
+    'action.download': 'डाउनलोड करें',
+    'action.continue': 'जारी रखें',
+    'action.back': 'वापस',
+    'action.next': 'अगला',
+    'action.save': 'सेव करें',
+    'action.cancel': 'रद्द करें'
+  },
+  
+  mr: {
+    // App basics
+    'app.title': 'अॅग्रिकनेक्ट',
+    'app.subtitle': 'सरकारी योजना पोर्टल',
+    'header.notifications': 'सूचना',
+    'header.login': 'लॉगिन / नोंदणी',
+    
+    // Hero section
+    'hero.title': 'सरकारी योजनांसह शेतकऱ्यांना सक्षम करणे',
+    'hero.subtitle': 'भारतीय शेतीला पाठिंबा देण्यासाठी डिझाइन केलेल्या सरकारी धोरणे, अनुदान आणि योजनांबद्दल रिअल-टाइम माहिती मिळवा',
+    'search.placeholder': 'योजना, धोरणे किंवा फायदे शोधा...',
+    'search.button': 'शोधा',
+    
+    // Navigation
+    'nav.schemes': 'सर्व योजना',
+    'nav.eligibility': 'पात्रता तपासक',
+    'nav.documents': 'दस्तऐवज अपलोड',
+    'nav.status': 'अर्ज स्थिती',
+    'nav.support': 'संपर्क सहाय्य',
+    
+    // Schemes
+    'schemes.featured': 'वैशिष्ट्यीकृत योजना',
+    'schemes.apply': 'आता अर्ज करा',
+    'schemes.details': 'तपशील पहा',
+    'schemes.amount': 'लाभाची रक्कम',
+    'schemes.deadline': 'शेवटची तारीख',
+    'schemes.beneficiaries': 'लाभार्थी',
+    'schemes.eligibility': 'पात्रता',
+    'schemes.category': 'श्रेणी',
+    'schemes.status': 'स्थिती',
+    
+    // Quick stats
+    'stats.total_schemes': 'एकूण योजना',
+    'stats.beneficiaries': 'सक्रिय लाभार्थी',
+    'stats.budget': 'वाटप केलेले बजेट',
+    'stats.states': 'समाविष्ट राज्ये',
+    
+    // Features
+    'features.new': 'नवीन वैशिष्ट्ये',
+    'features.schemes_db': 'योजना डेटाबेस',
+    'features.schemes_desc': 'सर्व सरकारी योजनांचा सर्वसमावेशक डेटाबेस ब्राउझ करा',
+    'features.eligibility': 'पात्रता तपासक',
+    'features.eligibility_desc': 'तात्काळ अनेक योजनांसाठी तुमची पात्रता तपासा',
+    'features.documents': 'दस्तऐवज अपलोड',
+    'features.documents_desc': 'तुमचे अर्ज दस्तऐवज अपलोड आणि व्यवस्थापित करा',
+    'features.status': 'अर्ज स्थिती',
+    'features.status_desc': 'तुमच्या अर्जाची प्रगती ट्रॅक करा',
+    'features.explore': 'योजना एक्सप्लोर करा',
+    'features.check': 'पात्रता तपासा',
+    'features.upload': 'दस्तऐवज अपलोड करा',
+    'features.track': 'स्थिती तपासा',
+    
+    // News and updates
+    'news.title': 'ताज्या बातम्या आणि अपडेट्स',
+    'news.view_all': 'सर्व बातम्या पहा',
+    'news.policy': 'धोरण अपडेट',
+    'news.technology': 'तंत्रज्ञान',
+    'news.subsidy': 'अनुदान',
+    
+    // Quick access
+    'quick.title': 'द्रुत प्रवेश',
+    'quick.support': 'संपर्क सहाय्य',
+    
+    // Footer
+    'footer.tagline': 'समृद्ध कृषी भविष्यासाठी शेतकऱ्यांना सरकारी योजनांशी जोडणे',
+    'footer.copyright': 'भारत सरकारचा उपक्रम',
+    
+    // Forms and applications
+    'form.name': 'पूर्ण नाव',
+    'form.phone': 'फोन नंबर',
+    'form.email': 'ईमेल पत्ता',
+    'form.state': 'राज्य',
+    'form.district': 'जिल्हा',
+    'form.village': 'गाव',
+    'form.land_size': 'जमिनीचा आकार (एकरमध्ये)',
+    'form.crop_type': 'मुख्य पीक प्रकार',
+    'form.farming_experience': 'शेती अनुभव (वर्षे)',
+    'form.submit': 'अर्ज सबमिट करा',
+    'form.required': 'आवश्यक फील्ड',
+    
+    // Farmer-specific terms
+    'farmer.land_holding': 'जमीन मालकी',
+    'farmer.crop_season': 'पीक हंगाम',
+    'farmer.irrigation': 'सिंचन प्रकार',
+    'farmer.income': 'वार्षिक उत्पन्न',
+    'farmer.category': 'शेतकरी श्रेणी',
+    'farmer.small': 'लहान शेतकरी',
+    'farmer.marginal': 'सीमांत शेतकरी',
+    'farmer.large': 'मोठा शेतकरी',
+    
+    // Common actions
+    'action.apply': 'अर्ज करा',
+    'action.check': 'तपासा',
+    'action.upload': 'अपलोड करा',
+    'action.download': 'डाउनलोड करा',
+    'action.continue': 'सुरू ठेवा',
+    'action.back': 'मागे',
+    'action.next': 'पुढे',
+    'action.save': 'सेव्ह करा',
+    'action.cancel': 'रद्द करा'
+  },
+  
+  ta: {
+    // App basics
+    'app.title': 'அக்ரிகனெக்ட்',
+    'app.subtitle': 'அரசு திட்ட போர்ட்டல்',
+    'header.notifications': 'அறிவிப்புகள்',
+    'header.login': 'உள்நுழைவு / பதிவு',
+    
+    // Hero section
+    'hero.title': 'அரசு திட்டங்களுடன் விவசாயிகளை வலுப்படுத்துதல்',
+    'hero.subtitle': 'இந்திய விவசாயத்தை ஆதரிக்க வடிவமைக்கப்பட்ட அரசு கொள்கைகள், மானியங்கள் மற்றும் திட்டங்களைப் பற்றிய நிகழ்நேர தகவல்களை அணுகவும்',
+    'search.placeholder': 'திட்டங்கள், கொள்கைகள் அல்லது நன்மைகளைத் தேடுங்கள்...',
+    'search.button': 'தேடல்',
+    
+    // Navigation
+    'nav.schemes': 'அனைத்து திட்டங்கள்',
+    'nav.eligibility': 'தகுதி சரிபார்ப்பு',
+    'nav.documents': 'ஆவண பதிவேற்றம்',
+    'nav.status': 'விண்ணப்ப நிலை',
+    'nav.support': 'தொடர்பு ஆதரவு',
+    
+    // Schemes
+    'schemes.featured': 'சிறப்பு திட்டங்கள்',
+    'schemes.apply': 'இப்போது விண்ணப்பிக்கவும்',
+    'schemes.details': 'விவரங்களைப் பார்க்கவும்',
+    'schemes.amount': 'நன்மை தொகை',
+    'schemes.deadline': 'கடைசி தேதி',
+    'schemes.beneficiaries': 'பயனாளிகள்',
+    'schemes.eligibility': 'தகுதி',
+    'schemes.category': 'வகை',
+    'schemes.status': 'நிலை',
+    
+    // Quick stats
+    'stats.total_schemes': 'மொத்த திட்டங்கள்',
+    'stats.beneficiaries': 'செயலில் உள்ள பயனாளிகள்',
+    'stats.budget': 'ஒதுக்கப்பட்ட பட்ஜெட்',
+    'stats.states': 'மாநிலங்கள் உள்ளடக்கியது',
+    
+    // Features
+    'features.new': 'புதிய அம்சங்கள்',
+    'features.schemes_db': 'திட்ட தரவுத்தளம்',
+    'features.schemes_desc': 'அனைத்து அரசு திட்டங்களின் விரிவான தரவுத்தளத்தை உலாவவும்',
+    'features.eligibility': 'தகுதி சரிபார்ப்பு',
+    'features.eligibility_desc': 'பல திட்டங்களுக்கான உங்கள் தகுதியை உடனடியாக சரிபார்க்கவும்',
+    'features.documents': 'ஆவண பதிவேற்றம்',
+    'features.documents_desc': 'உங்கள் விண்ணப்ப ஆவணங்களைப் பதிவேற்றி நிர்வகிக்கவும்',
+    'features.status': 'விண்ணப்ப நிலை',
+    'features.status_desc': 'உங்கள் விண்ணப்ப முன்னேற்றத்தைக் கண்காணிக்கவும்',
+    'features.explore': 'திட்டங்களை ஆராயுங்கள்',
+    'features.check': 'தகுதியைச் சரிபார்க்கவும்',
+    'features.upload': 'ஆவணங்களைப் பதிவேற்றவும்',
+    'features.track': 'நிலையைச் சரிபார்க்கவும்',
+    
+    // News and updates
+    'news.title': 'சமீபத்திய செய்திகள் மற்றும் புதுப்பிப்புகள்',
+    'news.view_all': 'அனைத்து செய்திகளையும் பார்க்கவும்',
+    'news.policy': 'கொள்கை புதுப்பிப்பு',
+    'news.technology': 'தொழில்நுட்பம்',
+    'news.subsidy': 'மானியம்',
+    
+    // Quick access
+    'quick.title': 'விரைவு அணுகல்',
+    'quick.support': 'தொடர்பு ஆதரவு',
+    
+    // Footer
+    'footer.tagline': 'செழிப்பான விவசாய எதிர்காலத்திற்காக விவசாயிகளை அரசு திட்டங்களுடன் இணைத்தல்',
+    'footer.copyright': 'இந்திய அரசின் முன்முயற்சி',
+    
+    // Forms and applications
+    'form.name': 'முழு பெயர்',
+    'form.phone': 'தொலைபேசி எண்',
+    'form.email': 'மின்னஞ்சல் முகவரி',
+    'form.state': 'மாநிலம்',
+    'form.district': 'மாவட்டம்',
+    'form.village': 'கிராமம்',
+    'form.land_size': 'நில அளவு (ஏக்கரில்)',
+    'form.crop_type': 'முதன்மை பயிர் வகை',
+    'form.farming_experience': 'விவசாய அனுபவம் (ஆண்டுகள்)',
+    'form.submit': 'விண்ணப்பத்தை சமர்ப்பிக்கவும்',
+    'form.required': 'தேவையான புலம்',
+    
+    // Farmer-specific terms
+    'farmer.land_holding': 'நில உடைமை',
+    'farmer.crop_season': 'பயிர் பருவம்',
+    'farmer.irrigation': 'பாசன வகை',
+    'farmer.income': 'வருடாந்திர வருமானம்',
+    'farmer.category': 'விவசாயி வகை',
+    'farmer.small': 'சிறு விவசாயி',
+    'farmer.marginal': 'ஒட்டுமொத்த விவசாயி',
+    'farmer.large': 'பெரிய விவசாயி',
+    
+    // Common actions
+    'action.apply': 'விண்ணப்பிக்கவும்',
+    'action.check': 'சரிபார்க்கவும்',
+    'action.upload': 'பதிவேற்றவும்',
+    'action.download': 'பதிவிறக்கவும்',
+    'action.continue': 'தொடரவும்',
+    'action.back': 'பின்',
+    'action.next': 'அடுத்து',
+    'action.save': 'சேமிக்கவும்',
+    'action.cancel': 'ரத்து செய்'
+  },
+  
+  te: {
+    // App basics
+    'app.title': 'అగ్రికనెక్ట్',
+    'app.subtitle': 'ప్రభుత్వ పథకాల పోర్టల్',
+    'header.notifications': 'నోటిఫికేషన్లు',
+    'header.login': 'లాగిన్ / రిజిస్టర్',
+    
+    // Hero section
+    'hero.title': 'ప్రభుత్వ పథకాలతో రైతులను శక్తివంతం చేయడం',
+    'hero.subtitle': 'భారతీయ వ్యవసాయానికి మద్దతు ఇవ్వడానికి రూపొందించిన ప్రభుత్వ విధానాలు, సబ్సిడీలు మరియు పథకాల గురించి రియల్-టైమ్ సమాచారాన్ని పొందండి',
+    'search.placeholder': 'పథకాలు, విధానాలు లేదా ప్రయోజనాల కోసం వెతకండి...',
+    'search.button': 'వెతకండి',
+    
+    // Navigation
+    'nav.schemes': 'అన్ని పథకాలు',
+    'nav.eligibility': 'అర్హత తనిఖీ',
+    'nav.documents': 'డాక్యుమెంట్ అప్‌లోడ్',
+    'nav.status': 'దరఖాస్తు స్థితి',
+    'nav.support': 'సంప్రదింపు మద్దతు',
+    
+    // Schemes
+    'schemes.featured': 'ప్రత్యేక పథకాలు',
+    'schemes.apply': 'ఇప్పుడే దరఖాస్తు చేసుకోండి',
+    'schemes.details': 'వివరాలు చూడండి',
+    'schemes.amount': 'ప్రయోజన మొత్తం',
+    'schemes.deadline': 'చివరి తేదీ',
+    'schemes.beneficiaries': 'లబ్ధిదారులు',
+    'schemes.eligibility': 'అర్హత',
+    'schemes.category': 'వర్గం',
+    'schemes.status': 'స్థితి',
+    
+    // Quick stats
+    'stats.total_schemes': 'మొత్తం పథకాలు',
+    'stats.beneficiaries': 'క్రియాశీల లబ్ధిదారులు',
+    'stats.budget': 'కేటాయించిన బడ్జెట్',
+    'stats.states': 'కవర్ చేసిన రాష్ట్రాలు',
+    
+    // Features
+    'features.new': 'కొత్త లక్షణాలు',
+    'features.schemes_db': 'పథకాల డేటాబేస్',
+    'features.schemes_desc': 'అన్ని ప్రభుత్వ పథకాల సమగ్ర డేటాబేస్‌ను బ్రౌజ్ చేయండి',
+    'features.eligibility': 'అర్హత తనిఖీ',
+    'features.eligibility_desc': 'అనేక పథకాలకు మీ అర్హతను తక్షణమే తనిఖీ చేయండి',
+    'features.documents': 'డాక్యుమెంట్ అప్‌లోడ్',
+    'features.documents_desc': 'మీ దరఖాస్తు డాక్యుమెంట్లను అప్‌లోడ్ చేసి నిర్వహించండి',
+    'features.status': 'దరఖాస్తు స్థితి',
+    'features.status_desc': 'మీ దరఖాస్తు పురోగతిని ట్రాక్ చేయండి',
+    'features.explore': 'పథకాలను అన్వేషించండి',
+    'features.check': 'అర్హతను తనిఖీ చేయండి',
+    'features.upload': 'డాక్యుమెంట్లను అప్‌లోడ్ చేయండి',
+    'features.track': 'స్థితిని తనిఖీ చేయండి',
+    
+    // News and updates
+    'news.title': 'తాజా వార్తలు మరియు అప్‌డేట్లు',
+    'news.view_all': 'అన్ని వార్తలను చూడండి',
+    'news.policy': 'విధాన అప్‌డేట్',
+    'news.technology': 'సాంకేతికత',
+    'news.subsidy': 'సబ్సిడీ',
+    
+    // Quick access
+    'quick.title': 'త్వరిత ప్రవేశం',
+    'quick.support': 'సంప్రదింపు మద్దతు',
+    
+    // Footer
+    'footer.tagline': 'సమృద్ధ వ్యవసాయ భవిష్యత్తు కోసం రైతులను ప్రభుత్వ పథకాలతో కనెక్ట్ చేయడం',
+    'footer.copyright': 'భారత ప్రభుత్వ చొరవ',
+    
+    // Forms and applications
+    'form.name': 'పూర్తి పేరు',
+    'form.phone': 'ఫోన్ నంబర్',
+    'form.email': 'ఇమెయిల్ చిరునామా',
+    'form.state': 'రాష్ట్రం',
+    'form.district': 'జిల్లా',
+    'form.village': 'గ్రామం',
+    'form.land_size': 'భూమి పరిమాణం (ఎకరాలలో)',
+    'form.crop_type': 'ప్రాథమిక పంట రకం',
+    'form.farming_experience': 'వ్యవసాయ అనుభవం (సంవత్సరాలు)',
+    'form.submit': 'దరఖాస్తును సమర్పించండి',
+    'form.required': 'అవసరమైన ఫీల్డ్',
+    
+    // Farmer-specific terms
+    'farmer.land_holding': 'భూమి స్వాధీనం',
+    'farmer.crop_season': 'పంట సీజన్',
+    'farmer.irrigation': 'నీటిపారుదల రకం',
+    'farmer.income': 'వార్షిక ఆదాయం',
+    'farmer.category': 'రైతు వర్గం',
+    'farmer.small': 'చిన్న రైతు',
+    'farmer.marginal': 'ఉపాంత రైతు',
+    'farmer.large': 'పెద్ద రైతు',
+    
+    // Common actions
+    'action.apply': 'దరఖాస్తు చేయండి',
+    'action.check': 'తనిఖీ చేయండి',
+    'action.upload': 'అప్‌లోడ్ చేయండి',
+    'action.download': 'డౌన్‌లోడ్ చేయండి',
+    'action.continue': 'కొనసాగించండి',
+    'action.back': 'వెనుకకు',
+    'action.next': 'తరువాత',
+    'action.save': 'సేవ్ చేయండి',
+    'action.cancel': 'రద్దు చేయండి'
+  },
+  
+  kn: {
+    // App basics
+    'app.title': 'ಅಗ್ರಿಕನೆಕ್ಟ್',
+    'app.subtitle': 'ಸರ್ಕಾರಿ ಯೋಜನೆಗಳ ಪೋರ್ಟಲ್',
+    'header.notifications': 'ಅಧಿಸೂಚನೆಗಳು',
+    'header.login': 'ಲಾಗಿನ್ / ನೋಂದಣಿ',
+    
+    // Hero section
+    'hero.title': 'ಸರ್ಕಾರಿ ಯೋಜನೆಗಳೊಂದಿಗೆ ರೈತರನ್ನು ಶಕ್ತಿಯುತಗೊಳಿಸುವುದು',
+    'hero.subtitle': 'ಭಾರತೀಯ ಕೃಷಿಯನ್ನು ಬೆಂಬಲಿಸಲು ವಿನ್ಯಾಸಗೊಳಿಸಲಾದ ಸರ್ಕಾರಿ ನೀತಿಗಳು, ಸಬ್ಸಿಡಿಗಳು ಮತ್ತು ಯೋಜನೆಗಳ ಬಗ್ಗೆ ನೈಜ-ಸಮಯದ ಮಾಹಿತಿಯನ್ನು ಪ್ರವೇಶಿಸಿ',
+    'search.placeholder': 'ಯೋಜನೆಗಳು, ನೀತಿಗಳು ಅಥವಾ ಪ್ರಯೋಜನಗಳನ್ನು ಹುಡುಕಿ...',
+    'search.button': 'ಹುಡುಕಿ',
+    
+    // Navigation
+    'nav.schemes': 'ಎಲ್ಲಾ ಯೋಜನೆಗಳು',
+    'nav.eligibility': 'ಅರ್ಹತೆ ಪರಿಶೀಲಕ',
+    'nav.documents': 'ದಾಖಲೆ ಅಪ್‌ಲೋಡ್',
+    'nav.status': 'ಅರ್ಜಿ ಸ್ಥಿತಿ',
+    'nav.support': 'ಸಂಪರ್ಕ ಬೆಂಬಲ',
+    
+    // Schemes
+    'schemes.featured': 'ವಿಶೇಷ ಯೋಜನೆಗಳು',
+    'schemes.apply': 'ಈಗ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
+    'schemes.details': 'ವಿವರಗಳನ್ನು ನೋಡಿ',
+    'schemes.amount': 'ಪ್ರಯೋಜನ ಮೊತ್ತ',
+    'schemes.deadline': 'ಅಂತಿಮ ದಿನಾಂಕ',
+    'schemes.beneficiaries': 'ಫಲಾನುಭವಿಗಳು',
+    'schemes.eligibility': 'ಅರ್ಹತೆ',
+    'schemes.category': 'ವರ್ಗ',
+    'schemes.status': 'ಸ್ಥಿತಿ',
+    
+    // Quick stats
+    'stats.total_schemes': 'ಒಟ್ಟು ಯೋಜನೆಗಳು',
+    'stats.beneficiaries': 'ಸಕ್ರಿಯ ಫಲಾನುಭವಿಗಳು',
+    'stats.budget': 'ಹಂಚಿದ ಬಜೆಟ್',
+    'stats.states': 'ಒಳಗೊಂಡ ರಾಜ್ಯಗಳು',
+    
+    // Features
+    'features.new': 'ಹೊಸ ಲಕ್ಷಣಗಳು',
+    'features.schemes_db': 'ಯೋಜನೆಗಳ ಡೇಟಾಬೇಸ್',
+    'features.schemes_desc': 'ಎಲ್ಲಾ ಸರ್ಕಾರಿ ಯೋಜನೆಗಳ ಸಮಗ್ರ ಡೇಟಾಬೇಸ್ ಅನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ',
+    'features.eligibility': 'ಅರ್ಹತೆ ಪರಿಶೀಲಕ',
+    'features.eligibility_desc': 'ಅನೇಕ ಯೋಜನೆಗಳಿಗೆ ನಿಮ್ಮ ಅರ್ಹತೆಯನ್ನು ತಕ್ಷಣ ಪರಿಶೀಲಿಸಿ',
+    'features.documents': 'ದಾಖಲೆ ಅಪ್‌ಲೋಡ್',
+    'features.documents_desc': 'ನಿಮ್ಮ ಅರ್ಜಿ ದಾಖಲೆಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮತ್ತು ನಿರ್ವಹಿಸಿ',
+    'features.status': 'ಅರ್ಜಿ ಸ್ಥಿತಿ',
+    'features.status_desc': 'ನಿಮ್ಮ ಅರ್ಜಿ ಪ್ರಗತಿಯನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ',
+    'features.explore': 'ಯೋಜನೆಗಳನ್ನು ಅನ್ವೇಷಿಸಿ',
+    'features.check': 'ಅರ್ಹತೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
+    'features.upload': 'ದಾಖಲೆಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+    'features.track': 'ಸ್ಥಿತಿಯನ್ನು ಪರಿಶೀಲಿಸಿ',
+    
+    // News and updates
+    'news.title': 'ಇತ್ತೀಚಿನ ಸುದ್ದಿ ಮತ್ತು ನವೀಕರಣಗಳು',
+    'news.view_all': 'ಎಲ್ಲಾ ಸುದ್ದಿಗಳನ್ನು ನೋಡಿ',
+    'news.policy': 'ನೀತಿ ನವೀಕರಣ',
+    'news.technology': 'ತಂತ್ರಜ್ಞಾನ',
+    'news.subsidy': 'ಸಬ್ಸಿಡಿ',
+    
+    // Quick access
+    'quick.title': 'ತ್ವರಿತ ಪ್ರವೇಶ',
+    'quick.support': 'ಸಂಪರ್ಕ ಬೆಂಬಲ',
+    
+    // Footer
+    'footer.tagline': 'ಸಮೃದ್ಧ ಕೃಷಿ ಭವಿಷ್ಯಕ್ಕಾಗಿ ರೈತರನ್ನು ಸರ್ಕಾರಿ ಯೋಜನೆಗಳೊಂದಿಗೆ ಸಂಪರ್ಕಿಸುವುದು',
+    'footer.copyright': 'ಭಾರತ ಸರ್ಕಾರದ ಉಪಕ್ರಮ',
+    
+    // Forms and applications
+    'form.name': 'ಪೂರ್ಣ ಹೆಸರು',
+    'form.phone': 'ಫೋನ್ ಸಂಖ್ಯೆ',
+    'form.email': 'ಇಮೇಲ್ ವಿಳಾಸ',
+    'form.state': 'ರಾಜ್ಯ',
+    'form.district': 'ಜಿಲ್ಲೆ',
+    'form.village': 'ಗ್ರಾಮ',
+    'form.land_size': 'ಭೂಮಿ ಗಾತ್ರ (ಎಕರೆಗಳಲ್ಲಿ)',
+    'form.crop_type': 'ಪ್ರಾಥಮಿಕ ಬೆಳೆ ವಿಧ',
+    'form.farming_experience': 'ಕೃಷಿ ಅನುಭವ (ವರ್ಷಗಳು)',
+    'form.submit': 'ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
+    'form.required': 'ಅಗತ್ಯ ಕ್ಷೇತ್ರ',
+    
+    // Farmer-specific terms
+    'farmer.land_holding': 'ಭೂಮಿ ಹಿಡುವಳಿ',
+    'farmer.crop_season': 'ಬೆಳೆ ಋತು',
+    'farmer.irrigation': 'ನೀರಾವರಿ ವಿಧ',
+    'farmer.income': 'ವಾರ್ಷಿಕ ಆದಾಯ',
+    'farmer.category': 'ರೈತ ವರ್ಗ',
+    'farmer.small': 'ಸಣ್ಣ ರೈತ',
+    'farmer.marginal': 'ಅಂಚಿನ ರೈತ',
+    'farmer.large': 'ದೊಡ್ಡ ರೈತ',
+    
+    // Common actions
+    'action.apply': 'ಅರ್ಜಿ ಸಲ್ಲಿಸಿ',
+    'action.check': 'ಪರಿಶೀಲಿಸಿ',
+    'action.upload': 'ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+    'action.download': 'ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+    'action.continue': 'ಮುಂದುವರಿಸಿ',
+    'action.back': 'ಹಿಂದೆ',
+    'action.next': 'ಮುಂದೆ',
+    'action.save': 'ಉಳಿಸಿ',
+    'action.cancel': 'ರದ್ದುಗೊಳಿಸಿ'
+  }
+};
+
+interface LanguageProviderProps {
+  children: ReactNode;
+}
+
+export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
+  const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
+
+  React.useEffect(() => {
+    const savedLanguage = localStorage.getItem('selectedLanguage') as Language;
+    if (savedLanguage && translations[savedLanguage]) {
+      setCurrentLanguage(savedLanguage);
+    }
+  }, []);
+
+  const setLanguage = (language: Language) => {
+    setCurrentLanguage(language);
+    localStorage.setItem('selectedLanguage', language);
+  };
+
+  const t = (key: string): string => {
+    return translations[currentLanguage][key as keyof typeof translations['en']] || key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ currentLanguage, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
 };

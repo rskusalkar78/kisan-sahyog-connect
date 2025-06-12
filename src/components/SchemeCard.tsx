@@ -3,201 +3,136 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, MapPin, CheckCircle, XCircle, User } from "lucide-react";
+import { Calendar, MapPin, Users, Info, FileText, ExternalLink } from "lucide-react";
 import SchemeApplicationForm from "./SchemeApplicationForm";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useToast } from "@/hooks/use-toast";
+
+interface Scheme {
+  id: number;
+  title: string;
+  description: string;
+  amount: string;
+  deadline: string;
+  category: string;
+  status: string;
+  beneficiaries: string;
+  eligibility: string;
+  state: string;
+  launchDate: string;
+  lastUpdated: string;
+}
 
 interface SchemeCardProps {
-  scheme: {
-    id: number;
-    title: string;
-    description: string;
-    amount: string;
-    deadline: string;
-    category: string;
-    status: string;
-    beneficiaries: string;
-    eligibility: string;
-    state: string;
-    launchDate: string;
-    lastUpdated: string;
-  };
+  scheme: Scheme;
 }
 
 const SchemeCard = ({ scheme }: SchemeCardProps) => {
+  const [showDetails, setShowDetails] = useState(false);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
-  const [eligibilityResult, setEligibilityResult] = useState<{
-    isEligible: boolean;
-    missingCriteria: string[];
-  } | null>(null);
-  const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
-  const { t } = useLanguage();
-  const { toast } = useToast();
 
-  const checkEligibility = () => {
-    setIsCheckingEligibility(true);
-    
-    // Simple eligibility simulation based on scheme type
-    setTimeout(() => {
-      let isEligible = true;
-      const missingCriteria: string[] = [];
-      
-      // Basic eligibility rules simulation
-      if (scheme.category === "Income Support") {
-        // Simulate land size requirement
-        const hasSmallLand = Math.random() > 0.3;
-        if (!hasSmallLand) {
-          isEligible = false;
-          missingCriteria.push(t('eligibility.land_size_required'));
-        }
-      }
-      
-      if (scheme.category === "Insurance") {
-        // Simulate bank account requirement
-        const hasBankAccount = Math.random() > 0.2;
-        if (!hasBankAccount) {
-          isEligible = false;
-          missingCriteria.push(t('eligibility.bank_account_required'));
-        }
-      }
-      
-      if (scheme.category === "Loan") {
-        // Simulate age and income requirements
-        const meetsAgeRequirement = Math.random() > 0.1;
-        if (!meetsAgeRequirement) {
-          isEligible = false;
-          missingCriteria.push(t('eligibility.age_requirement'));
-        }
-      }
-      
-      setEligibilityResult({ isEligible, missingCriteria });
-      setIsCheckingEligibility(false);
-      
-      toast({
-        title: isEligible ? t('eligibility.eligible') : t('eligibility.not_eligible'),
-        description: isEligible 
-          ? t('eligibility.can_apply') 
-          : `${missingCriteria.length} ${t('eligibility.requirements_missing')}`,
-        variant: isEligible ? "default" : "destructive"
-      });
-    }, 2000);
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "active":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "inactive":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "upcoming":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
   };
 
-  const handleApplyClick = () => {
-    if (!eligibilityResult) {
-      toast({
-        title: t('eligibility.check_first'),
-        description: t('eligibility.check_before_apply'),
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!eligibilityResult.isEligible) {
-      toast({
-        title: t('eligibility.not_eligible'),
-        description: t('eligibility.cannot_apply'),
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setShowApplicationForm(true);
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      "Income Support": "bg-emerald-100 text-emerald-800",
+      "Insurance": "bg-blue-100 text-blue-800",
+      "Subsidy": "bg-purple-100 text-purple-800",
+      "Loan": "bg-orange-100 text-orange-800",
+      "Technology": "bg-cyan-100 text-cyan-800",
+      "Soil Health": "bg-green-100 text-green-800",
+      "Marketing": "bg-pink-100 text-pink-800",
+      "Irrigation": "bg-teal-100 text-teal-800",
+      "Seeds": "bg-yellow-100 text-yellow-800",
+      "Equipment": "bg-indigo-100 text-indigo-800"
+    };
+    return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
   };
 
   return (
     <>
-      <Card className="farmer-card border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-        <CardHeader>
+      <Card className="border-green-200 hover:shadow-lg transition-all duration-300 hover:border-green-300 bg-gradient-to-br from-white to-green-50">
+        <CardHeader className="pb-3">
           <div className="flex justify-between items-start mb-2">
-            <Badge variant="secondary" className="bg-secondary text-secondary-foreground">
+            <Badge className={getCategoryColor(scheme.category)}>
               {scheme.category}
             </Badge>
-            <Badge variant="outline" className="border-primary text-primary">
+            <Badge className={getStatusColor(scheme.status)}>
               {scheme.status}
             </Badge>
           </div>
-          <CardTitle className="farmer-text-accent text-lg leading-tight">{scheme.title}</CardTitle>
-          <CardDescription className="farmer-text-muted text-sm">{scheme.description}</CardDescription>
+          <CardTitle className="text-green-800 text-lg">{scheme.title}</CardTitle>
+          <CardDescription className="text-green-600 line-clamp-2">
+            {scheme.description}
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="flex justify-between">
-                <span className="font-medium farmer-text-muted">{t('schemes.amount')}:</span>
-                <span className="font-bold farmer-text">{scheme.amount}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium farmer-text-muted">{t('schemes.beneficiaries')}:</span>
-                <span className="font-bold farmer-text">{scheme.beneficiaries}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium farmer-text-muted">{t('schemes.deadline')}:</span>
-                <span className="font-bold farmer-text">{scheme.deadline}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium farmer-text-muted">{t('schemes.state')}:</span>
-                <span className="font-bold farmer-text">{scheme.state}</span>
-              </div>
+        
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex items-center text-green-700">
+              <Calendar className="h-4 w-4 mr-2" />
+              <span className="font-medium">{scheme.amount}</span>
             </div>
-            
-            {/* Eligibility Status */}
-            {eligibilityResult && (
-              <div className={`p-3 rounded-lg border ${
-                eligibilityResult.isEligible 
-                  ? 'bg-secondary border-primary/20' 
-                  : 'bg-destructive/10 border-destructive/20'
-              }`}>
-                <div className="flex items-center space-x-2">
-                  {eligibilityResult.isEligible ? (
-                    <CheckCircle className="h-4 w-4 text-primary" />
-                  ) : (
-                    <XCircle className="h-4 w-4 text-destructive" />
-                  )}
-                  <span className={`text-sm font-medium ${
-                    eligibilityResult.isEligible ? 'text-primary' : 'text-destructive'
-                  }`}>
-                    {eligibilityResult.isEligible ? t('eligibility.eligible') : t('eligibility.not_eligible')}
-                  </span>
+            <div className="flex items-center text-green-600">
+              <Users className="h-4 w-4 mr-2" />
+              <span>{scheme.beneficiaries}</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <MapPin className="h-4 w-4 mr-2" />
+              <span>{scheme.state}</span>
+            </div>
+            <div className="flex items-center text-green-600">
+              <Calendar className="h-4 w-4 mr-2" />
+              <span>{scheme.deadline}</span>
+            </div>
+          </div>
+
+          {showDetails && (
+            <div className="space-y-3 pt-3 border-t border-green-200">
+              <div>
+                <h4 className="font-medium text-green-800 mb-1">Eligibility:</h4>
+                <p className="text-sm text-green-600">{scheme.eligibility}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 text-sm text-green-600">
+                <div>
+                  <span className="font-medium">Launch Date:</span>
+                  <p>{scheme.launchDate}</p>
                 </div>
-                {!eligibilityResult.isEligible && eligibilityResult.missingCriteria.length > 0 && (
-                  <ul className="mt-2 text-xs text-destructive list-disc list-inside">
-                    {eligibilityResult.missingCriteria.map((criteria, index) => (
-                      <li key={index}>{criteria}</li>
-                    ))}
-                  </ul>
-                )}
+                <div>
+                  <span className="font-medium">Last Updated:</span>
+                  <p>{scheme.lastUpdated}</p>
+                </div>
               </div>
-            )}
-            
-            <div className="pt-2 space-y-2">
-              <Button 
-                onClick={checkEligibility}
-                disabled={isCheckingEligibility}
-                variant="outline"
-                className="w-full border-border hover:bg-accent text-accent-foreground"
-              >
-                <User className="h-4 w-4 mr-2" />
-                {isCheckingEligibility ? t('eligibility.checking') : t('eligibility.check')}
-              </Button>
-              
-              <Button 
-                onClick={handleApplyClick}
-                disabled={!eligibilityResult || !eligibilityResult.isEligible}
-                className={`w-full farmer-button ${
-                  eligibilityResult?.isEligible 
-                    ? '' 
-                    : 'opacity-50 cursor-not-allowed'
-                }`}
-              >
-                {t('schemes.apply')}
-              </Button>
-              
-              <Button variant="outline" className="w-full border-border hover:bg-accent">
-                {t('schemes.details')}
-              </Button>
             </div>
+          )}
+
+          <div className="flex space-x-2 pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowDetails(!showDetails)}
+              className="flex-1 border-green-200 text-green-700 hover:bg-green-50"
+            >
+              <Info className="h-4 w-4 mr-1" />
+              {showDetails ? "Less Info" : "More Info"}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => setShowApplicationForm(true)}
+              className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+            >
+              <FileText className="h-4 w-4 mr-1" />
+              Apply Now
+            </Button>
           </div>
         </CardContent>
       </Card>
