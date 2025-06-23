@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot, Upload, Phone } from "lucide-react";
+import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot, Upload, Phone, Clock, AlertCircle, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -15,39 +15,6 @@ const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { t } = useLanguage();
-
-  const featuredSchemes = [
-    {
-      id: 1,
-      title: "PM-KISAN Samman Nidhi",
-      description: "Direct income support of ₹6000 per year to farmer families",
-      amount: "₹6,000/year",
-      deadline: "Ongoing",
-      category: "Income Support",
-      status: "Active",
-      beneficiaries: "12 Crore+"
-    },
-    {
-      id: 2,
-      title: "Pradhan Mantri Fasal Bima Yojana",
-      description: "Crop insurance scheme protecting farmers against production risks",
-      amount: "Up to ₹2 Lakh",
-      deadline: "Seasonal",
-      category: "Insurance",
-      status: "Active",
-      beneficiaries: "5.5 Crore+"
-    },
-    {
-      id: 3,
-      title: "Soil Health Card Scheme",
-      description: "Free soil testing and health cards for optimal fertilizer use",
-      amount: "Free",
-      deadline: "Ongoing",
-      category: "Soil Health",
-      status: "Active",
-      beneficiaries: "22 Crore+"
-    }
-  ];
 
   const recentNews = [
     {
@@ -74,17 +41,65 @@ const Index = () => {
     { label: t('stats.states'), value: "36", icon: MapPin }
   ];
 
+  const recentApplications = [
+    {
+      id: "AGC12345678",
+      scheme: "PM-KISAN Samman Nidhi",
+      status: "Under Review",
+      date: "Dec 15, 2024",
+      statusColor: "bg-yellow-100 text-yellow-800"
+    },
+    {
+      id: "AGC12345679",
+      scheme: "Soil Health Card Scheme",
+      status: "Approved",
+      date: "Dec 10, 2024",
+      statusColor: "bg-green-100 text-green-800"
+    },
+    {
+      id: "AGC12345680",
+      scheme: "Pradhan Mantri Fasal Bima Yojana",
+      status: "Documents Required",
+      date: "Dec 8, 2024",
+      statusColor: "bg-red-100 text-red-800"
+    }
+  ];
+
+  const quickActions = [
+    {
+      title: "Apply for New Scheme",
+      description: "Browse and apply for government schemes",
+      icon: FileText,
+      color: "green",
+      action: () => navigate("/schemes")
+    },
+    {
+      title: "Check Eligibility",
+      description: "Find schemes you qualify for",
+      icon: CheckCircle,
+      color: "blue",
+      action: () => navigate("/eligibility")
+    },
+    {
+      title: "Upload Documents",
+      description: "Submit required documents",
+      icon: Upload,
+      color: "purple",
+      action: () => navigate("/documents")
+    },
+    {
+      title: "Track Applications",
+      description: "Monitor your application status",
+      icon: Clock,
+      color: "orange",
+      action: () => navigate("/status")
+    }
+  ];
+
   const handleNotificationClick = () => {
     toast({
       title: t('header.notifications'),
       description: "You have 3 new scheme updates available",
-    });
-  };
-
-  const handleSchemeApply = (schemeName: string) => {
-    toast({
-      title: "Application Started",
-      description: `Redirecting to ${schemeName} application form`,
     });
   };
 
@@ -201,6 +216,70 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Quick Actions Dashboard */}
+      <section className="py-12 px-4 bg-white">
+        <div className="container mx-auto">
+          <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">Quick Actions</h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {quickActions.map((action, index) => (
+              <Card 
+                key={index}
+                className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                onClick={action.action}
+              >
+                <CardContent className="p-6 text-center">
+                  <action.icon className={`h-12 w-12 text-${action.color}-600 mx-auto mb-4`} />
+                  <h4 className="font-semibold text-green-800 mb-2">{action.title}</h4>
+                  <p className="text-sm text-green-600">{action.description}</p>
+                  <Button className={`mt-4 w-full bg-${action.color}-600 hover:bg-${action.color}-700`}>
+                    Get Started
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Applications */}
+      <section className="py-12 px-4 bg-green-50">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-3xl font-bold text-green-800">Recent Applications</h3>
+            <Button 
+              variant="outline" 
+              className="border-green-200 hover:bg-green-100"
+              onClick={() => navigate("/status")}
+            >
+              <User className="h-4 w-4 mr-2" />
+              View All Applications
+            </Button>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {recentApplications.map((application) => (
+              <Card key={application.id} className="border-green-200 hover:shadow-lg transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge className={application.statusColor}>
+                      {application.status}
+                    </Badge>
+                    <div className="flex items-center text-sm text-green-600">
+                      <Calendar className="h-4 w-4 mr-1" />
+                      {application.date}
+                    </div>
+                  </div>
+                  <h4 className="font-semibold text-green-800 mb-2">{application.scheme}</h4>
+                  <p className="text-sm text-green-600 mb-3">Application ID: {application.id}</p>
+                  <Button variant="outline" className="w-full border-green-200 hover:bg-green-50">
+                    View Details
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* New Features Section */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto">
@@ -261,58 +340,6 @@ const Index = () => {
                 </Button>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Schemes */}
-      <section className="py-12 px-4 bg-white">
-        <div className="container mx-auto">
-          <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">{t('schemes.featured')}</h3>
-          <div className="grid md:grid-cols-3 gap-8">
-            {featuredSchemes.map((scheme) => (
-              <Card key={scheme.id} className="border-green-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                <CardHeader>
-                  <div className="flex justify-between items-start mb-2">
-                    <Badge variant="secondary" className="bg-green-100 text-green-800">
-                      {scheme.category}
-                    </Badge>
-                    <Badge variant="outline" className="border-green-500 text-green-700">
-                      {scheme.status}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-green-800">{scheme.title}</CardTitle>
-                  <CardDescription className="text-green-600">{scheme.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">{t('schemes.amount')}:</span>
-                      <span className="text-sm font-bold text-green-800">{scheme.amount}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">{t('schemes.beneficiaries')}:</span>
-                      <span className="text-sm font-bold text-green-800">{scheme.beneficiaries}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">{t('schemes.deadline')}:</span>
-                      <span className="text-sm font-bold text-green-800">{scheme.deadline}</span>
-                    </div>
-                    <div className="pt-4 space-y-2">
-                      <Button 
-                        className="w-full bg-green-600 hover:bg-green-700"
-                        onClick={() => handleSchemeApply(scheme.title)}
-                      >
-                        {t('schemes.apply')}
-                      </Button>
-                      <Button variant="outline" className="w-full border-green-200 hover:bg-green-50">
-                        {t('schemes.details')}
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
       </section>
