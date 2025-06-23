@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { User, MapPin, Briefcase, FileText, Phone, Mail } from "lucide-react";
+import { User, MapPin, Briefcase, FileText, Phone, Mail, X } from "lucide-react";
 
 interface SchemeApplicationFormProps {
   schemeName: string;
@@ -14,6 +14,8 @@ interface SchemeApplicationFormProps {
 }
 
 const SchemeApplicationForm = ({ schemeName, onClose }: SchemeApplicationFormProps) => {
+  console.log("SchemeApplicationForm rendered for scheme:", schemeName);
+
   const [formData, setFormData] = useState({
     fullName: "",
     fatherName: "",
@@ -47,6 +49,7 @@ const SchemeApplicationForm = ({ schemeName, onClose }: SchemeApplicationFormPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted with data:", formData);
     
     // Generate application number
     const applicationNumber = `AGC${Date.now().toString().slice(-8)}`;
@@ -62,7 +65,15 @@ const SchemeApplicationForm = ({ schemeName, onClose }: SchemeApplicationFormPro
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <CardHeader className="bg-green-600 text-white">
+        <CardHeader className="bg-green-600 text-white relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="absolute right-2 top-2 text-white hover:bg-green-700"
+          >
+            <X className="h-4 w-4" />
+          </Button>
           <CardTitle className="flex items-center">
             <FileText className="h-6 w-6 mr-2" />
             Apply for {schemeName}

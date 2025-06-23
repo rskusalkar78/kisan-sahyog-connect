@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Users, Info, FileText, ExternalLink } from "lucide-react";
+import { Calendar, MapPin, Users, Info, FileText } from "lucide-react";
 import SchemeApplicationForm from "./SchemeApplicationForm";
 
 interface Scheme {
@@ -28,6 +28,8 @@ interface SchemeCardProps {
 const SchemeCard = ({ scheme }: SchemeCardProps) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+
+  console.log("SchemeCard rendered, showApplicationForm:", showApplicationForm);
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -56,6 +58,16 @@ const SchemeCard = ({ scheme }: SchemeCardProps) => {
       "Equipment": "bg-indigo-100 text-indigo-800"
     };
     return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  };
+
+  const handleApplyClick = () => {
+    console.log("Apply button clicked for scheme:", scheme.title);
+    setShowApplicationForm(true);
+  };
+
+  const handleCloseForm = () => {
+    console.log("Closing application form");
+    setShowApplicationForm(false);
   };
 
   return (
@@ -127,7 +139,7 @@ const SchemeCard = ({ scheme }: SchemeCardProps) => {
             </Button>
             <Button
               size="sm"
-              onClick={() => setShowApplicationForm(true)}
+              onClick={handleApplyClick}
               className="flex-1 bg-green-600 hover:bg-green-700 text-white"
             >
               <FileText className="h-4 w-4 mr-1" />
@@ -140,7 +152,7 @@ const SchemeCard = ({ scheme }: SchemeCardProps) => {
       {showApplicationForm && (
         <SchemeApplicationForm
           schemeName={scheme.title}
-          onClose={() => setShowApplicationForm(false)}
+          onClose={handleCloseForm}
         />
       )}
     </>
