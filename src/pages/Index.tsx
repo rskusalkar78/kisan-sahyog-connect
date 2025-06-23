@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot, Upload, Phone } from "lucide-react";
+import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, CheckCircle, Bot, Upload, Phone, IndianRupee, Building2, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -24,7 +24,12 @@ const Index = () => {
       deadline: "Ongoing",
       category: "Income Support",
       status: "Active",
-      beneficiaries: "12 Crore+"
+      beneficiaries: "12 Crore+",
+      applicationFees: "Free",
+      startedBy: "Ministry of Agriculture & Farmers Welfare",
+      launchDate: "February 2019",
+      lastDateToApply: "No deadline - Ongoing enrollment",
+      eligibilityDetails: "Small and marginal farmers with cultivable land up to 2 hectares"
     },
     {
       id: 2,
@@ -34,7 +39,12 @@ const Index = () => {
       deadline: "Seasonal",
       category: "Insurance",
       status: "Active",
-      beneficiaries: "5.5 Crore+"
+      beneficiaries: "5.5 Crore+",
+      applicationFees: "2% of sum insured for Kharif, 1.5% for Rabi",
+      startedBy: "Ministry of Agriculture & Farmers Welfare",
+      launchDate: "April 2016",
+      lastDateToApply: "Before sowing season begins",
+      eligibilityDetails: "All farmers including sharecroppers and tenant farmers"
     },
     {
       id: 3,
@@ -44,7 +54,12 @@ const Index = () => {
       deadline: "Ongoing",
       category: "Soil Health",
       status: "Active",
-      beneficiaries: "22 Crore+"
+      beneficiaries: "22 Crore+",
+      applicationFees: "Free",
+      startedBy: "Department of Agriculture & Cooperation",
+      launchDate: "February 2015",
+      lastDateToApply: "Ongoing - Apply anytime",
+      eligibilityDetails: "All farmers with agricultural land"
     }
   ];
 
@@ -264,7 +279,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured Schemes */}
+      {/* Featured Schemes with Detailed Information */}
       <section className="py-12 px-4 bg-white">
         <div className="container mx-auto">
           <h3 className="text-3xl font-bold text-green-800 mb-8 text-center">{t('schemes.featured')}</h3>
@@ -280,23 +295,76 @@ const Index = () => {
                       {scheme.status}
                     </Badge>
                   </div>
-                  <CardTitle className="text-green-800">{scheme.title}</CardTitle>
+                  <CardTitle className="text-green-800 text-lg">{scheme.title}</CardTitle>
                   <CardDescription className="text-green-600">{scheme.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">{t('schemes.amount')}:</span>
-                      <span className="text-sm font-bold text-green-800">{scheme.amount}</span>
+                  <div className="space-y-4">
+                    {/* Key Details */}
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="flex items-center text-green-700">
+                        <IndianRupee className="h-4 w-4 mr-2" />
+                        <span className="font-medium">{scheme.amount}</span>
+                      </div>
+                      <div className="flex items-center text-green-600">
+                        <Calendar className="h-4 w-4 mr-2" />
+                        <span>{scheme.deadline}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">{t('schemes.beneficiaries')}:</span>
-                      <span className="text-sm font-bold text-green-800">{scheme.beneficiaries}</span>
+
+                    {/* Detailed Information */}
+                    <div className="space-y-3 pt-3 border-t border-green-200">
+                      <div className="text-sm">
+                        <div className="flex items-start space-x-2 mb-2">
+                          <Building2 className="h-4 w-4 text-green-600 mt-0.5" />
+                          <div>
+                            <span className="font-medium text-green-800">Started by:</span>
+                            <p className="text-green-600">{scheme.startedBy}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-start space-x-2 mb-2">
+                          <Clock className="h-4 w-4 text-green-600 mt-0.5" />
+                          <div>
+                            <span className="font-medium text-green-800">Launch Date:</span>
+                            <p className="text-green-600">{scheme.launchDate}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-2 mb-2">
+                          <IndianRupee className="h-4 w-4 text-green-600 mt-0.5" />
+                          <div>
+                            <span className="font-medium text-green-800">Application Fees:</span>
+                            <p className="text-green-600">{scheme.applicationFees}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-2 mb-2">
+                          <Calendar className="h-4 w-4 text-green-600 mt-0.5" />
+                          <div>
+                            <span className="font-medium text-green-800">Apply Before:</span>
+                            <p className="text-green-600">{scheme.lastDateToApply}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-2 mb-2">
+                          <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
+                          <div>
+                            <span className="font-medium text-green-800">Eligibility:</span>
+                            <p className="text-green-600">{scheme.eligibilityDetails}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start space-x-2">
+                          <Award className="h-4 w-4 text-green-600 mt-0.5" />
+                          <div>
+                            <span className="font-medium text-green-800">Beneficiaries:</span>
+                            <p className="text-green-600">{scheme.beneficiaries}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm font-medium text-green-700">{t('schemes.deadline')}:</span>
-                      <span className="text-sm font-bold text-green-800">{scheme.deadline}</span>
-                    </div>
+
                     <div className="pt-4 space-y-2">
                       <Button 
                         className="w-full bg-green-600 hover:bg-green-700"
