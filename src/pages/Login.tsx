@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Award, Eye, EyeOff, User, Mail, Phone, MapPin, CreditCard } from 'lucide-react';
+import { Award, Eye, EyeOff, User, Mail, Phone, MapPin, CreditCard, Zap, Users, Shield } from 'lucide-react';
 
 const Login: React.FC = () => {
   const [activeTab, setActiveTab] = useState('login');
@@ -65,18 +66,43 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleQuickLogin = async (email: string, password: string, userType: string) => {
+    setError('');
+    setIsLoading(true);
+    
+    // Pre-fill the form
+    setLoginData({ email, password });
+    
+    try {
+      const success = await login(email, password);
+      if (success) {
+        toast({
+          title: "Quick Login Successful",
+          description: `Welcome as ${userType}! Redirecting to dashboard...`,
+        });
+        navigate('/');
+      } else {
+        setError('Quick login failed. Please try again.');
+      }
+    } catch (error) {
+      setError('Quick login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    // Validation
+    // Simplified validation
     if (registerData.password !== registerData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    if (registerData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (registerData.password.length < 4) {
+      setError('Password must be at least 4 characters long');
       return;
     }
 
@@ -87,10 +113,10 @@ const Login: React.FC = () => {
         name: registerData.name,
         email: registerData.email,
         password: registerData.password,
-        phone: registerData.phone,
-        aadharNumber: registerData.aadharNumber,
-        state: registerData.state,
-        district: registerData.district,
+        phone: registerData.phone || '+91 0000000000',
+        aadharNumber: registerData.aadharNumber || '0000-0000-0000',
+        state: registerData.state || 'Delhi',
+        district: registerData.district || 'New Delhi',
         role: registerData.role
       });
 
@@ -165,6 +191,51 @@ const Login: React.FC = () => {
               )}
 
               <TabsContent value="login">
+                {/* Quick Login Section */}
+                <div className="mb-6">
+                  <div className="text-center mb-4">
+                    <h3 className="text-lg font-semibold text-green-800 mb-2">Quick Login</h3>
+                    <p className="text-sm text-green-600">Choose a demo account to get started instantly</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-3">
+                    <Button
+                      variant="outline"
+                      className="w-full border-green-200 hover:bg-green-50 justify-start"
+                      onClick={() => handleQuickLogin('farmer@example.com', 'password', 'Farmer')}
+                      disabled={isLoading}
+                    >
+                      <Users className="h-4 w-4 mr-3 text-green-600" />
+                      <div className="text-left">
+                        <div className="font-medium">Login as Farmer</div>
+                        <div className="text-xs text-green-600">Access all farmer schemes</div>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      className="w-full border-blue-200 hover:bg-blue-50 justify-start"
+                      onClick={() => handleQuickLogin('admin@example.com', 'admin123', 'Admin')}
+                      disabled={isLoading}
+                    >
+                      <Shield className="h-4 w-4 mr-3 text-blue-600" />
+                      <div className="text-left">
+                        <div className="font-medium">Login as Admin</div>
+                        <div className="text-xs text-blue-600">Full system access</div>
+                      </div>
+                    </Button>
+                  </div>
+                  
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-green-200" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-2 text-green-500">Or login manually</span>
+                    </div>
+                  </div>
+                </div>
+
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="login-email" className="text-green-700">Email</Label>
@@ -222,23 +293,20 @@ const Login: React.FC = () => {
                     {isLoading ? 'Signing in...' : 'Sign In'}
                   </Button>
                 </form>
-
-                <div className="mt-6 text-center">
-                  <p className="text-sm text-green-600">
-                    Demo credentials: <br />
-                    <span className="font-mono text-xs">
-                      farmer@example.com / password<br />
-                      admin@example.com / admin123
-                    </span>
-                  </p>
-                </div>
               </TabsContent>
 
               <TabsContent value="register">
+                <div className="mb-4">
+                  <div className="text-center mb-4">
+                    <h3 className="text-lg font-semibold text-green-800 mb-2">Create New Account</h3>
+                    <p className="text-sm text-green-600">Join thousands of farmers using our platform</p>
+                  </div>
+                </div>
+
                 <form onSubmit={handleRegister} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="register-name" className="text-green-700">Full Name</Label>
+                      <Label htmlFor="register-name" className="text-green-700">Full Name *</Label>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
                         <Input
@@ -254,7 +322,7 @@ const Login: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="register-role" className="text-green-700">Role</Label>
+                      <Label htmlFor="register-role" className="text-green-700">Role *</Label>
                       <Select value={registerData.role} onValueChange={(value) => handleInputChange('role', value)}>
                         <SelectTrigger className="border-green-200 focus:border-green-400 focus:ring-green-400">
                           <SelectValue />
@@ -269,7 +337,7 @@ const Login: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="register-email" className="text-green-700">Email</Label>
+                    <Label htmlFor="register-email" className="text-green-700">Email *</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
                       <Input
@@ -285,77 +353,13 @@ const Login: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="register-phone" className="text-green-700">Phone Number</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
-                      <Input
-                        id="register-phone"
-                        type="tel"
-                        placeholder="+91 9876543210"
-                        value={registerData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className="pl-10 border-green-200 focus:border-green-400 focus:ring-green-400"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-aadhar" className="text-green-700">Aadhar Number</Label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
-                      <Input
-                        id="register-aadhar"
-                        type="text"
-                        placeholder="1234-5678-9012"
-                        value={registerData.aadharNumber}
-                        onChange={(e) => handleInputChange('aadharNumber', e.target.value)}
-                        className="pl-10 border-green-200 focus:border-green-400 focus:ring-green-400"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="register-state" className="text-green-700">State</Label>
-                      <Select value={registerData.state} onValueChange={(value) => handleInputChange('state', value)}>
-                        <SelectTrigger className="border-green-200 focus:border-green-400 focus:ring-green-400">
-                          <SelectValue placeholder="Select state" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {indianStates.map((state) => (
-                            <SelectItem key={state} value={state}>{state}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="register-district" className="text-green-700">District</Label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
-                        <Input
-                          id="register-district"
-                          type="text"
-                          placeholder="Your district"
-                          value={registerData.district}
-                          onChange={(e) => handleInputChange('district', e.target.value)}
-                          className="pl-10 border-green-200 focus:border-green-400 focus:ring-green-400"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="register-password" className="text-green-700">Password</Label>
+                    <Label htmlFor="register-password" className="text-green-700">Password *</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
                       <Input
                         id="register-password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="Create a password"
+                        placeholder="Create a password (min 4 characters)"
                         value={registerData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         className="pl-10 pr-10 border-green-200 focus:border-green-400 focus:ring-green-400"
@@ -372,7 +376,7 @@ const Login: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="register-confirm-password" className="text-green-700">Confirm Password</Label>
+                    <Label htmlFor="register-confirm-password" className="text-green-700">Confirm Password *</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
                       <Input
@@ -384,6 +388,78 @@ const Login: React.FC = () => {
                         className="pl-10 border-green-200 focus:border-green-400 focus:ring-green-400"
                         required
                       />
+                    </div>
+                  </div>
+
+                  {/* Optional Fields Section */}
+                  <div className="mt-6">
+                    <div className="flex items-center mb-4">
+                      <div className="flex-1 border-t border-green-200"></div>
+                      <span className="px-3 text-sm text-green-600 bg-white">Optional Information</span>
+                      <div className="flex-1 border-t border-green-200"></div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="register-phone" className="text-green-700">Phone Number</Label>
+                        <div className="relative">
+                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                          <Input
+                            id="register-phone"
+                            type="tel"
+                            placeholder="+91 9876543210 (optional)"
+                            value={registerData.phone}
+                            onChange={(e) => handleInputChange('phone', e.target.value)}
+                            className="pl-10 border-green-200 focus:border-green-400 focus:ring-green-400"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="register-state" className="text-green-700">State</Label>
+                          <Select value={registerData.state} onValueChange={(value) => handleInputChange('state', value)}>
+                            <SelectTrigger className="border-green-200 focus:border-green-400 focus:ring-green-400">
+                              <SelectValue placeholder="Select state (optional)" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {indianStates.map((state) => (
+                                <SelectItem key={state} value={state}>{state}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="register-district" className="text-green-700">District</Label>
+                          <div className="relative">
+                            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                            <Input
+                              id="register-district"
+                              type="text"
+                              placeholder="Your district (optional)"
+                              value={registerData.district}
+                              onChange={(e) => handleInputChange('district', e.target.value)}
+                              className="pl-10 border-green-200 focus:border-green-400 focus:ring-green-400"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="register-aadhar" className="text-green-700">Aadhar Number</Label>
+                        <div className="relative">
+                          <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                          <Input
+                            id="register-aadhar"
+                            type="text"
+                            placeholder="1234-5678-9012 (optional)"
+                            value={registerData.aadharNumber}
+                            onChange={(e) => handleInputChange('aadharNumber', e.target.value)}
+                            className="pl-10 border-green-200 focus:border-green-400 focus:ring-green-400"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
 

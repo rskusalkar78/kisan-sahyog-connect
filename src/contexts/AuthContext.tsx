@@ -78,32 +78,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       // Simulate API call - replace with actual authentication
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 800));
       
-      // Mock authentication - in real app, validate with backend
-      if (email === 'farmer@example.com' && password === 'password') {
+      // Mock authentication - accept any email/password for demo purposes
+      // In production, this would validate against your backend
+      if (email && password && email.includes('@') && password.length >= 1) {
+        // Determine role based on email or use default
+        let role: 'farmer' | 'admin' | 'officer' = 'farmer';
+        let name = 'Demo User';
+        
+        if (email.includes('admin') || email === 'admin@example.com') {
+          role = 'admin';
+          name = 'Admin User';
+        } else if (email.includes('officer') || email === 'officer@example.com') {
+          role = 'officer';
+          name = 'Government Officer';
+        } else if (email === 'farmer@example.com') {
+          name = 'Rajesh Kumar';
+        } else {
+          // Extract name from email for new users
+          const emailName = email.split('@')[0];
+          name = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+        }
+        
         const mockUser: User = {
-          id: '1',
-          email: 'farmer@example.com',
-          name: 'Rajesh Kumar',
-          role: 'farmer',
+          id: Date.now().toString(),
+          email: email,
+          name: name,
+          role: role,
           phone: '+91 9876543210',
           aadharNumber: '1234-5678-9012',
-          state: 'Punjab',
-          district: 'Ludhiana'
-        };
-        
-        setUser(mockUser);
-        localStorage.setItem('auth_token', 'mock_jwt_token');
-        localStorage.setItem('user_data', JSON.stringify(mockUser));
-        return true;
-      } else if (email === 'admin@example.com' && password === 'admin123') {
-        const mockUser: User = {
-          id: '2',
-          email: 'admin@example.com',
-          name: 'Admin User',
-          role: 'admin',
-          phone: '+91 9876543211',
           state: 'Delhi',
           district: 'New Delhi'
         };
