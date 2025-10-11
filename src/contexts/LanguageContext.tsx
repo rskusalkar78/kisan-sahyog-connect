@@ -23,7 +23,7 @@ export const useLanguage = () => {
 const translations = {
   en: {
     // App basics
-    'app.title': 'Agriconnect',
+    'app.title': 'Kisan Sahyog Connect',
     'app.subtitle': 'Government Schemes Portal',
     'header.notifications': 'Notifications',
     'header.login': 'Login / Register',

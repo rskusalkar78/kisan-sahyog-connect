@@ -29,7 +29,7 @@ const ContactSupport = () => {
     },
     {
       title: "Email Support",
-      value: "support@agriconnect.gov.in",
+      value: "support@kisansahyog.gov.in",
       description: "Response within 24 hours",
       icon: Mail
     },
