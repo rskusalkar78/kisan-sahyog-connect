@@ -7,13 +7,16 @@ import { Search, Bell, TrendingUp, Calendar, MapPin, FileText, Award, BookOpen, 
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import UserProfile from "@/components/UserProfile";
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isAuthenticated, user } = useAuth();
 
   const featuredSchemes = [
     {
@@ -165,9 +168,16 @@ const Index = () => {
                 <Bell className="h-4 w-4 mr-2" />
                 {t('header.notifications')}
               </Button>
-              <Button className="bg-green-600 hover:bg-green-700">
-                {t('header.login')}
-              </Button>
+              {isAuthenticated ? (
+                <UserProfile />
+              ) : (
+                <Button 
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => navigate('/login')}
+                >
+                  {t('header.login')}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -176,6 +186,16 @@ const Index = () => {
       {/* Hero Section */}
       <section className="py-12 px-4">
         <div className="container mx-auto text-center">
+          {isAuthenticated && user && (
+            <div className="mb-6">
+              <h2 className="text-3xl font-bold text-green-800 mb-2">
+                Welcome back, {user.name}!
+              </h2>
+              <p className="text-lg text-green-600">
+                Ready to explore government schemes and manage your applications?
+              </p>
+            </div>
+          )}
           <h2 className="text-4xl font-bold text-green-800 mb-4">
             {t('hero.title')}
           </h2>

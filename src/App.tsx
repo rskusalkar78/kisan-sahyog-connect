@@ -5,7 +5,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
 import Schemes from "./pages/Schemes";
 import EligibilityChecker from "./pages/EligibilityChecker";
 import Documents from "./pages/Documents";
@@ -17,23 +20,46 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <LanguageProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/schemes" element={<Schemes />} />
-            <Route path="/eligibility" element={<EligibilityChecker />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/status" element={<ApplicationStatus />} />
-            <Route path="/support" element={<ContactSupport />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </LanguageProvider>
+    <AuthProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/schemes" element={
+                <ProtectedRoute>
+                  <Schemes />
+                </ProtectedRoute>
+              } />
+              <Route path="/eligibility" element={
+                <ProtectedRoute>
+                  <EligibilityChecker />
+                </ProtectedRoute>
+              } />
+              <Route path="/documents" element={
+                <ProtectedRoute>
+                  <Documents />
+                </ProtectedRoute>
+              } />
+              <Route path="/status" element={
+                <ProtectedRoute>
+                  <ApplicationStatus />
+                </ProtectedRoute>
+              } />
+              <Route path="/support" element={
+                <ProtectedRoute>
+                  <ContactSupport />
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </LanguageProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
