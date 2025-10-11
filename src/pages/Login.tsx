@@ -55,7 +55,7 @@ const Login: React.FC = () => {
           title: "Login Successful",
           description: "Welcome back! Redirecting to dashboard...",
         });
-        navigate('/');
+        navigate('/home');
       } else {
         setError('Invalid email or password. Please try again.');
       }
@@ -80,7 +80,7 @@ const Login: React.FC = () => {
           title: "Quick Login Successful",
           description: `Welcome as ${userType}! Redirecting to dashboard...`,
         });
-        navigate('/');
+        navigate('/home');
       } else {
         setError('Quick login failed. Please try again.');
       }
@@ -125,7 +125,7 @@ const Login: React.FC = () => {
           title: "Registration Successful",
           description: "Account created successfully! Welcome to Kisan Sahyog Connect.",
         });
-        navigate('/');
+        navigate('/home');
       } else {
         setError('Registration failed. Email might already be in use.');
       }
@@ -172,9 +172,9 @@ const Login: React.FC = () => {
 
         <Card className="border-green-200 shadow-xl">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl text-green-800">Welcome</CardTitle>
+            <CardTitle className="text-2xl text-green-800">Welcome to Kisan Sahyog Connect</CardTitle>
             <CardDescription className="text-green-600">
-              Sign in to your account or create a new one
+              Access government schemes and manage your applications. Sign in or create a new account to get started.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -475,12 +475,9 @@ const Login: React.FC = () => {
             </Tabs>
 
             <div className="mt-6 text-center">
-              <Link 
-                to="/" 
-                className="text-sm text-green-600 hover:text-green-800 underline"
-              >
-                ← Back to Home
-              </Link>
+              <p className="text-sm text-green-600">
+                Welcome to Kisan Sahyog Connect - Your Gateway to Government Schemes
+              </p>
             </div>
           </CardContent>
         </Card>
